@@ -1,0 +1,134 @@
+[
+    {
+        "qtype": "TEXT",
+        "question": "Melyik a második legkönnyebb kémiai elem? ",
+        "answer": "Hélium",
+        "regex": "^(helium|he)$"
+    },
+    {
+        "qtype": "ABCD",
+        "question": "Melyik az egyik jellemző modellje a következő autómárkának?",
+        "answer": "generated on-the-fly",
+        "regex": "^([a-d]|[A-D])$"
+    },
+    {
+        "qtype": "SET",
+        "question": "Sorold fel a Naprendszer bolygóit: ",
+        "answer": "Merkúr Vénusz Föld Mars Jupiter Szaturnusz Uránusz Neptunusz",
+        "regex": "merkur|venus[z]?|fold|mars|jupiter|s[z]?aturnus[z]?|uranus[z]?|neptunus[z]?"
+    },
+    {
+        "qtype": "DATE",
+        "question": "Mikor volt a holdra szállás? ",
+        "answer": "1969-07-20",
+        "regex": "^[12][0-9]{3}-([0][1-9]|[1][012])-([0][1-9]|[12][0-9]|[3][01])$"
+    },
+    {
+        "qtype": "BOOL",
+        "question": "A víz 0°C-on mindig megfagy? ",
+        "answer": "Hamis",
+        "regex": "^(hamis|nem|h|n)$"
+    },
+    {
+        "qtype": "TEXT",
+        "question": "Mi Szlovákia fővárosa? ",
+        "answer": "Pozsony",
+        "regex": "^(pozsony|bratislava)$"
+    },
+    {
+        "qtype": "FLOAT",
+        "question": "Mennyi a PI értéke? ",
+        "answer": 3.141592,
+        "regex": ""
+    },
+    {
+        "qtype": "TEXT",
+        "question": "Melyik kontinensen folyik a Föld leghosszabb folyója? ",
+        "answer": "Afrika",
+        "regex": "^(afrika|africa)$"
+    },
+    {
+        "qtype": "DATE",
+        "question": "Mikor történt a World Trade Center elleni terrortámadás? ",
+        "answer": "2001-09-11",
+        "regex": "^[12][0-9]{3}-([0][1-9]|[1][012])-([0][1-9]|[12][0-9]|[3][01])$"
+    },
+    {
+        "qtype": "ABCD",
+        "question": "Melyik az egyik jellemző modellje a következő autómárkának? ",
+        "answer": "generated on-the-fly",
+        "regex": "^([a-d]|[A-D])$"
+    },
+    {
+        "qtype": "FLOAT",
+        "question": "Mennyi Usain Bolt 100m-es világcsúcsának időeredménye? ",
+        "answer": 9.58,
+        "regex": ""
+    },
+    {
+        "qtype": "INTEGER",
+        "question": "Mennyi 2-nek a 10. hatványa? ",
+        "answer": 1024,
+        "regex": ""
+    },
+    {
+        "qtype": "TEXT",
+        "question": "Melyik a legnépszerűbb programozási nyelv? ",
+        "answer": "Python",
+        "regex": "^python$"
+    },
+    {
+        "qtype": "INTEGER",
+        "question": "Melyik évben írták alá az Aranybullát? ",
+        "answer": 1222,
+        "regex": ""
+    },
+    {
+        "qtype":"BOOL",
+        "question": "Az emberi test sejtjei száma nagyszágrendekkel nagyobb, mint ahány baktériumot tartalmaz? ",
+        "answer": "Hamis",
+        "regex": "^(hamis|nem|h|n)$"
+    },
+    {
+        "qtype": "ABCD",
+        "question": "Melyik az egyik jellemző modellje a következő autómárkának? ",
+        "answer": "generated on-the-fly",
+        "regex": "^([a-d]|[A-D])$"
+    },
+    {
+        "qtype": "TEXT",
+        "question": "Melyik állatosztálynak van 8 lába? ",
+        "answer": "Pók",
+        "regex": "^(pok|pokok)$"
+    },
+    {
+        "qtype":"BOOL",
+        "question": "A banán radioaktív? ",
+        "answer": "Igaz",
+        "regex": "^(igaz|igen|i)$"
+    },
+    {
+        "qtype": "INTEGER",
+        "question": "Hány éle van egy kockának? ",
+        "answer": 12,
+        "regex": ""
+    },
+    {
+        "qtype": "ABCD",
+        "question": "Melyik az egyik jellemző modellje a következő autómárkának? ",
+        "answer": "generated on-the-fly",
+        "regex": "^([a-d]|[A-D])$"
+    },
+    {
+        "qtype": "TEXT",
+        "question": "Mely vállalat korszakalkotó találmánya a Földre visszaszálló újrahasznosítható rakétatest? ",
+        "answer": "SpaceX",
+        "regex": "^space[ -]?x$"
+    },
+    {
+        "qtype": "BOOL",
+        "question": "Leonardo da Vinci egyszerre volt festő, mérnök és feltaláló? ",
+        "answer": "Igaz",
+        "regex": "^(igaz|igen|i)$"
+    }
+]
