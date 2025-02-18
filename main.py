@@ -1,7 +1,7 @@
 from random import sample, shuffle
 import time
 import json
-
+# TODO: Program modulokra bontása:
 from modules import ask_question
 
 # JSON beolvasása fájlból
@@ -74,10 +74,13 @@ def main() -> None:
         answer, right_answer = ask_question(question)
         points += check_answer(answer, right_answer)[2]
     # timer vége + kalkuláció
-        end_time = time.time()
-    time_taken = end_time - start_time
-    # TODO: időeredmény kiírása mm:ss formátumban
-    print(f"Idő: {time_taken:.2f} másodperc")
+    end_time = time.time()
+    total_time = round(end_time - start_time)
+    # időeredmény kiírása mm:ss formátumban
+    minutes, seconds = divmod(total_time, 60)
+    formatted_time = f"{minutes:02}:{seconds:02}"
+    print(f"-------------------------\nGratulálok!")
+    print(f"Játékidőd: {formatted_time}")
     print(f"Eredményed: {100 * points/5 / num_of_questions:.1f}%" + "\n")
 
 
