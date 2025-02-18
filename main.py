@@ -1,6 +1,12 @@
 from random import sample, shuffle
+
+import json
+
 from modules import ask_question
 
+# JSON beolvasása fájlból
+with open("cars.json", "r", encoding="utf-8") as file:
+    cars = json.load(file)
 
 def generate_questions(qty: int = 1, num_of_choices: int = 4) -> tuple[str, str, str]:
     questions = []
@@ -61,12 +67,16 @@ def main() -> None:
     num_of_questions = get_num_of_questions(len(cars))
     num_of_choices = get_num_of_choices(2, 8)
     questions = generate_questions(num_of_questions, num_of_choices)
-    # timer indítása
+    # TODO: timer indítása
+
+    
     for question in questions:
         answer, right_answer = ask_question(question)
         points += check_answer(answer, right_answer)[2]
-    # timer vége + kalkuláció
-    # időeredmény kiírása mm:ss formátumban
+    # TODO: timer vége + kalkuláció
+
+    # TODO: időeredmény kiírása mm:ss formátumban
+
     print(f"Eredményed: {100 * points/5 / num_of_questions:.1f}%" + "\n")
 
 
