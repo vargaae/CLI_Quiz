@@ -1,1 +1,0 @@
-{"highscoreholder": "Norbi", "highscore": 55}
