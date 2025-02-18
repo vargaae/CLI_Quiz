@@ -1,5 +1,5 @@
 from random import sample, shuffle
-
+import time
 import json
 
 from modules import ask_question
@@ -67,16 +67,17 @@ def main() -> None:
     num_of_questions = get_num_of_questions(len(cars))
     num_of_choices = get_num_of_choices(2, 8)
     questions = generate_questions(num_of_questions, num_of_choices)
-    # TODO: timer indítása
-
+    # timer indítása
+    start_time = time.time()
     
     for question in questions:
         answer, right_answer = ask_question(question)
         points += check_answer(answer, right_answer)[2]
-    # TODO: timer vége + kalkuláció
-
+    # timer vége + kalkuláció
+        end_time = time.time()
+    time_taken = end_time - start_time
     # TODO: időeredmény kiírása mm:ss formátumban
-
+    print(f"Idő: {time_taken:.2f} másodperc")
     print(f"Eredményed: {100 * points/5 / num_of_questions:.1f}%" + "\n")
 
 
