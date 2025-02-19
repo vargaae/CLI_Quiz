@@ -1,12 +1,15 @@
 from random import sample, shuffle
 import time
 import json
+import settings
+
 # TODO: Program modulokra bontása:
-from modules import ask_question
+from modules import ask_questions
 
 # JSON beolvasása fájlból
 with open("cars.json", "r", encoding="utf-8") as file:
     cars = json.load(file)
+
 
 def generate_questions(qty: int = 1, num_of_choices: int = 4) -> tuple[str, str, str]:
     questions = []
@@ -53,35 +56,33 @@ def get_num_of_choices(min: int, max: int) -> int:
 
 def check_answer(your_answer, right_answer):
     if your_answer == right_answer:
-        return True, f"\033[32mA válasz helyes!\033[0m\n", 5
+        print(f"\033[32m\u2588\u2588\033[0m\n") # Zöld kocka kiíratása ha helyes a válasz
+        return 1
     else:
-        return (
-            False,
-            f"\033[31mA válasz helytelen, a helyes válasz {right_answer} lett volna.\033[0m\n",
-            0,
-        )
+        print(f"\033[31m\u2588\u2588\033[0m\n") # Piros kocka kiíratása ha helytelen a válasz
+        return 0
 
 
 def main() -> None:
     points = 0
     num_of_questions = get_num_of_questions(len(cars))
-    num_of_choices = get_num_of_choices(2, 8)
+    num_of_choices = get_num_of_choices(settings.MIN_CHOICE, settings.MAX_CHOICE)
     questions = generate_questions(num_of_questions, num_of_choices)
     # timer indítása
     start_time = time.time()
-    
+
     for question in questions:
-        answer, right_answer = ask_question(question)
-        points += check_answer(answer, right_answer)[2]
+        answer, right_answer = ask_questions(question)
+        points += check_answer(answer, right_answer)
     # timer vége + kalkuláció
     end_time = time.time()
     total_time = round(end_time - start_time)
     # időeredmény kiírása mm:ss formátumban
     minutes, seconds = divmod(total_time, 60)
-    formatted_time = f"{minutes:02}:{seconds:02}"
-    print(f"-------------------------\nGratulálok!")
-    print(f"Játékidőd: {formatted_time}")
-    print(f"Eredményed: {100 * points/5 / num_of_questions:.1f}%" + "\n")
+    
+    print(f"-------------------------\nGratulálok!") # TODO Észrevétel: csak akkor kéne gratulálni ha az eredmény kifejezetten jó
+    print(f"\033[33mJátékidőd:\033[0m {minutes:02}:{seconds:02}")
+    print(f"\033[33mEredményed:\033[0m {100 * points / num_of_questions:.1f}%\n")
 
 
 if __name__ == "__main__":
