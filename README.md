@@ -9,4 +9,5 @@
 - ✅ Véletlenszerű sorrend: A kérdések és válaszok sorrendje keverve lesz.
 - ✅ Pontozás és eredményösszegzés: A játék végén összegzi az eredményt.
 - ✅ Időmérés és ranglista: A játék időre mehet, és az eredményeket elmenti.
-- Segítségek: Felezés (50/50) és Tipp.
+- ✅ Segítségek: Felezés (50/50)
+- ✅ Kategóriák kibóvítése

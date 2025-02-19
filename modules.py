@@ -28,7 +28,7 @@ def get_question_type() -> str:
 #  Adatok beolvasása JSON fájlból
 def load_questions(question_type):
     try:
-        with open(question_type + ".json", "r", encoding="utf-8") as file:
+        with open("./quizes/" + question_type + ".json", "r", encoding="utf-8") as file:
             raw_data = json.load(file)
         return raw_data
     except FileNotFoundError:
