@@ -8,16 +8,20 @@ def get_question_type() -> str:
     print("Milyen témájú kvízt szeretnél?\nLehetőségek:")
     print("A.: Fővárosok")
     print("B.: Autómárkák")
+    print("C.: Dalok")
     while True:
         user_input = input("Válassz: ")
-        if user_input.lower() not in "ab":
-            print('"A" vagy "B" választási lehetőséged van!')
+        if user_input.lower() not in "abc":
+            print('"A", "B" vagy "C" választási lehetőséged van!')
             continue
         break
-    if user_input.lower() == "a":
-        question_type = "capitals"
-    else:
-        question_type = "cars"
+    match user_input.lower():
+        case "a":
+            question_type = "capitals"
+        case "b":
+            question_type = "cars"
+        case "c":
+            question_type = "songs"
     return question_type
 
 
@@ -86,6 +90,8 @@ def ask_questions(question: list, question_type: str) -> int:
                 print(f"Mi a fővárosa \033[36m{question_topic}\033[0m-nak/-nek?")
             case "cars":
                 print(f"Melyik a jellemző modellje a(z) \033[36m{question_topic}\033[0m autómárkának?")
+            case "songs":
+                print(f"Melyik a(z) \033[36m{question_topic}\033[0m zenei formáció egyik ismert dala?")
         for letter, item in answers_picked_dict.items():
             print("    " + letter + ". " + item)
         if help_count: print(f'\033[35mFelező segítség ({help_count}db) használata: "/2"\033[0m')
