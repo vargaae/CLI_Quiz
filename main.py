@@ -5,13 +5,15 @@ from modules import *
 
 def main() -> None:
     points = 0
-    num_of_questions = get_num_of_questions(len(cars))
+    question_type = get_question_type()
+    questions_data = load_questions(question_type)
+    num_of_questions = get_num_of_questions(len(questions_data))
     num_of_choices = get_num_of_choices(settings.MIN_CHOICE, settings.MAX_CHOICE)
-    questions = generate_questions(num_of_questions, num_of_choices)
+    questions = generate_questions(num_of_questions, num_of_choices, questions_data)
 
     start_time = time.time() # Timer indítása
     for question in questions:
-        answer, right_answer = ask_questions(question)
+        answer, right_answer = ask_questions(question, question_type)
         points += check_answer(answer, right_answer)
     end_time = time.time() 
     total_time = round(end_time - start_time) # Timer vége + kalkuláció

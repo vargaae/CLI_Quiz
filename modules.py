@@ -3,9 +3,34 @@ import json
 from random import choice, shuffle, sample
 
 
+#  Kérdéstípus választási lehetőség
+def get_question_type() -> str:
+    print("Milyen témájú kvízt szeretnél?\nLehetőségek:")
+    print("A.: Fővárosok")
+    print("B.: Autómárkák")
+    while True:
+        user_input = input("Válassz: ")
+        if user_input.lower() not in "ab":
+            print('"A" vagy "B" választási lehetőséged van!')
+            continue
+        break
+    if user_input.lower() == "a":
+        question_type = "capitals"
+    else:
+        question_type = "cars"
+    return question_type
+
+
 #  Adatok beolvasása JSON fájlból
-with open("cars.json", "r", encoding="utf-8") as file:
-    cars = json.load(file)
+def load_questions(question_type):
+    try:
+        with open(question_type + ".json", "r", encoding="utf-8") as file:
+            raw_data = json.load(file)
+        return raw_data
+    except FileNotFoundError:
+        print("\033[31mHIBA! A kérdésfájl nem található!\033[0m")
+        exit()
+
 
 #  A kérdések számának bekérése
 def get_num_of_questions(max: int) -> int:
@@ -19,6 +44,7 @@ def get_num_of_questions(max: int) -> int:
                 return num_of_questions
         except ValueError:
             print("Egész számot adj meg!")
+
 
 #  A választási lehetőségek számának bekérése
 def get_num_of_choices(min: int, max: int) -> int:
@@ -35,37 +61,41 @@ def get_num_of_choices(min: int, max: int) -> int:
 
 
 #  A bekért mennyiségű kvízkérdés generálása bekért mennyiségű válaszlehetőséggel
-def generate_questions(qty: int = 1, num_of_choices: int = 4) -> tuple[str, str, str]:
+def generate_questions(qty: int, num_of_choices: int, questions_data: dict) -> tuple[str, str, list[str]]:
     questions = []
-    for car_brand in sample(list(cars.keys()), qty):
-        right_answer = cars[car_brand]
-        wrong_answers = list(cars.values())
+    for question_subject in sample(list(questions_data.keys()), qty):
+        right_answer = questions_data[question_subject]
+        wrong_answers = list(questions_data.values())
         wrong_answers.remove(right_answer)
         answers_picked = sample(wrong_answers, num_of_choices - 1)
         answers_picked.append(right_answer)
         shuffle(answers_picked)
-        questions.append((car_brand, right_answer, answers_picked))
+        questions.append((question_subject, right_answer, answers_picked))
     return questions
 
 
 #  A kérdések feltétele, a felhasználói válasz és a jó válasz visszaadásával
-def ask_questions(question: list) -> int:
+def ask_questions(question: list, question_type: str) -> int:
     help_count = settings.HELP_COUNT
-    car_brand, right_answer, choices_picked = question
+    question_topic, right_answer, choices_picked = question
     answers_picked_dict = { chr(ord("A") + i): choices_picked[i] for i in range(len(choices_picked)) }
     already_used_help = False
     while True:
-        print(f"Melyik a jellemző modellje a(z) \033[36m{car_brand}\033[0m autómárkának?")
-        for letter, car_model in answers_picked_dict.items():
-            print("    " + letter + ". " + car_model)
+        match question_type:
+            case "capitals":
+                print(f"Mi a fővárosa \033[36m{question_topic}\033[0m-nak/-nek?")
+            case "cars":
+                print(f"Melyik a jellemző modellje a(z) \033[36m{question_topic}\033[0m autómárkának?")
+        for letter, item in answers_picked_dict.items():
+            print("    " + letter + ". " + item)
         if help_count: print(f'\033[35mFelező segítség ({help_count}db) használata: "/2"\033[0m')
         your_answer = input("Tipped --> ").upper()
         if your_answer == "/2":
             if help_count == 0:
-                print("\033[33mNincs több felezési lehetőséged!\033[0m")
+                print("\033[33mNincs több felezési lehetőséged!\033[0m\n")
                 continue
             if already_used_help:
-                print("\033[33mMár használtál egy felezést ennél a kérdésnél!\033[0m")
+                print("\033[33mMár használtál egy felezést ennél a kérdésnél!\033[0m\n")
                 continue
             help_count -= 1
             num_of_choices = len(answers_picked_dict)
