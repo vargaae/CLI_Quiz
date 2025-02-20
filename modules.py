@@ -18,11 +18,12 @@ def get_question_type() -> str:
     print(c.highlight("Válassz az alábbi témakörök közül:\n"))
     print("\tA: Fővárosok")
     print("\tB: Autómárkák")
-    print("\tC: Dalok")
+    print("\tC: Magyar dalok")
+    print("\tD: Nemzetközi dalok")
     while True:
         user_input = input("--> ")
-        if user_input.lower() not in "abc":
-            print(c.warning('"A", "B" vagy "C" választási lehetőséged van!'))
+        if user_input.lower() not in "abcd":
+            print(c.warning('"A", "B", "C" vagy "D" választási lehetőséged van!'))
             continue
         break
     match user_input.lower():
@@ -31,7 +32,9 @@ def get_question_type() -> str:
         case "b":
             question_type = "cars"
         case "c":
-            question_type = "songs"
+            question_type = "songs_hu"
+        case "d":
+            question_type = "songs_int"
     return question_type
 
 
@@ -106,8 +109,8 @@ def ask_questions(question: list, question_type: str) -> int:
                 print(f"Mi {c.highlight(question_topic)} fővárosa?")
             case "cars":
                 print(f"Melyik a jellemző modellje a(z) {c.highlight(question_topic)} autómárkának?")
-            case "songs":
-                print(f"Melyik a(z) {c.highlight(question_topic)} zenei formáció egyik ismert dala?")
+            case "songs_hu" | "songs_int":
+                print(f"Melyik a(z) {c.highlight(question_topic)} egyik ismert dala?")
         for letter, item in answers_picked_dict.items():
             print(f"\t{letter}. {item}")
         if help_count: print(c.info(f'Felező segítség ({help_count}db) használata: "/2"'))
@@ -150,11 +153,13 @@ def check_answer(your_answer, right_answer):
 def show_results(progress: list, total_time, points, num_of_questions) -> None:
     progress_bar = reduce(lambda x, y: x + y, [c.col(f"\u2588\u2588", c.C.GREEN) if item else c.col(f"\u2588\u2588", c.C.RED) for item in progress])
     percentage = f"{100 * points / num_of_questions:.1f}%"
-    print(c.col(str('-' * (len(progress_bar)//8+18)), c.C.YELLOW))
+    dashes = c.col(str('-' * (len(progress_bar)//8 + len(percentage)+13)), c.C.YELLOW)
+    print(dashes)
     print(f"{c.col("Eredményed:", c.C.YELLOW)} {progress_bar} {c.col(percentage, c.C.YELLOW)}")
-    print(c.col(str('-' * (len(progress_bar)//8+18)), c.C.YELLOW))
+    print(dashes)
     minutes, seconds = divmod(total_time, 60) # Időeredmény kiírása mm:ss formátumban
     print(c.col(f"Játékidőd: {minutes:02}:{seconds:02}", c.C.YELLOW) + "\n")
+    print(dashes)
 
 
 def run_game():
