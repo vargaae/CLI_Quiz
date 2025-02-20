@@ -3,6 +3,7 @@ import json
 from ascii import ascii_art
 import colors_cli as c
 from os import system
+from functools import reduce
 from random import choice, shuffle, sample
 
 
@@ -140,7 +141,15 @@ def ask_questions(question: list, question_type: str) -> int:
 def check_answer(your_answer, right_answer):
     if your_answer == right_answer:
         print(c.col(f"\u2588\u2588\n", c.C.GREEN)) # Zöld kocka kiíratása ha helyes a válasz
-        return 1
+        return True
     else:
         print(c.col(f"\u2588\u2588\n", c.C.RED)) # Piros kocka kiíratása ha helytelen a válasz
-        return 0
+        return False
+    
+def show_results(progress: list, total_time, points, num_of_questions) -> None:
+    progress_bar = reduce(lambda x, y: x + y, [c.col(f"\u2588\u2588", c.C.GREEN) if item else c.col(f"\u2588\u2588", c.C.RED) for item in progress])
+    percentage = f"{100 * points / num_of_questions:.1f}%"
+    print(f"{c.col("Eredményed:", c.C.YELLOW)} {progress_bar} {c.col(percentage, c.C.YELLOW)}\n")
+    minutes, seconds = divmod(total_time, 60) # Időeredmény kiírása mm:ss formátumban
+    print(c.col(f"-------------------------\nGratulálok!", c.C.YELLOW)) # TODO Észrevétel: csak akkor kéne gratulálni ha az eredmény kifejezetten jó
+    print(c.col(f"Játékidőd: {minutes:02}:{seconds:02}", c.C.YELLOW))
