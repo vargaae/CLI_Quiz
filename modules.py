@@ -1,18 +1,26 @@
 import settings
 import json
+from ascii import ascii_art
+import colors_cli as c
+from os import system
 from random import choice, shuffle, sample
+
+
+def show_welcome_screen():
+    system("cls")
+    print(c.col(ascii_art, c.C.PURPLE))
 
 
 #  Kérdéstípus választási lehetőség
 def get_question_type() -> str:
-    print("Milyen témájú kvízt szeretnél?\nLehetőségek:")
-    print("A.: Fővárosok")
-    print("B.: Autómárkák")
-    print("C.: Dalok")
+    print(c.highlight("Válassz az alábbi témakörök közül:\n"))
+    print("\tA: Fővárosok")
+    print("\tB: Autómárkák")
+    print("\tC: Dalok")
     while True:
-        user_input = input("Válassz: ")
+        user_input = input("--> ")
         if user_input.lower() not in "abc":
-            print('"A", "B" vagy "C" választási lehetőséged van!')
+            print(c.warning('"A", "B" vagy "C" választási lehetőséged van!'))
             continue
         break
     match user_input.lower():
@@ -32,7 +40,7 @@ def load_questions(question_type):
             raw_data = json.load(file)
         return raw_data
     except FileNotFoundError:
-        print("\033[31mHIBA! A kérdésfájl nem található!\033[0m")
+        print(c.error("HIBA! A kérdésfájl nem található!"))
         exit()
 
 
@@ -41,13 +49,16 @@ def get_num_of_questions(max: int) -> int:
     while True:
         try:
             num_of_questions = int(input("Hány kérdést szeretnél? "))
+            if num_of_questions < 1:
+                print(c.warning(f"Ez túl kevés lesz, nem?"))
+                continue
             if num_of_questions > max:
-                print(f"Maximum {max} kérdést választhatsz!")
+                print(c.warning(f"Maximum {max} kérdést választhatsz!"))
                 continue
             else:
                 return num_of_questions
         except ValueError:
-            print("Egész számot adj meg!")
+            print(c.warning("Egész számot adj meg!"))
 
 
 #  A választási lehetőségek számának bekérése
@@ -56,12 +67,15 @@ def get_num_of_choices(min: int, max: int) -> int:
         try:
             num_of_choices = int(input(f"Hány választási lehetőséget szeretnél [{min}-{max}]? "))
             if (min <= num_of_choices <= max) and (num_of_choices % 2 == 0):
+                input(c.info("Üss [Enter]-t a kezdéshez"))
+                system("cls")
+                show_welcome_screen()
                 return num_of_choices
             else:
-                print(f"A választási lehetőségek száma {min} és {max} közötti páros szám lehet!")
+                print(c.warning(f"A választási lehetőségek száma {min} és {max} közötti páros szám lehet!"))
                 continue
         except ValueError:
-            print("Egész számot adj meg!")
+            print(c.warning("Egész számot adj meg!"))
 
 
 #  A bekért mennyiségű kvízkérdés generálása bekért mennyiségű válaszlehetőséggel
@@ -87,21 +101,21 @@ def ask_questions(question: list, question_type: str) -> int:
     while True:
         match question_type:
             case "capitals":
-                print(f"Mi a fővárosa \033[36m{question_topic}\033[0m-nak/-nek?")
+                print(f"Mi {c.highlight(question_topic)} fővárosa?")
             case "cars":
-                print(f"Melyik a jellemző modellje a(z) \033[36m{question_topic}\033[0m autómárkának?")
+                print(f"Melyik a jellemző modellje a(z) {c.highlight(question_topic)} autómárkának?")
             case "songs":
-                print(f"Melyik a(z) \033[36m{question_topic}\033[0m zenei formáció egyik ismert dala?")
+                print(f"Melyik a(z) {c.highlight(question_topic)} zenei formáció egyik ismert dala?")
         for letter, item in answers_picked_dict.items():
-            print("    " + letter + ". " + item)
-        if help_count: print(f'\033[35mFelező segítség ({help_count}db) használata: "/2"\033[0m')
+            print(f"\t{letter}. {item}")
+        if help_count: print(c.info(f'Felező segítség ({help_count}db) használata: "/2"'))
         your_answer = input("Tipped --> ").upper()
         if your_answer == "/2":
             if help_count == 0:
-                print("\033[33mNincs több felezési lehetőséged!\033[0m\n")
+                print(c.warning("Nincs több felezési lehetőséged!\n"))
                 continue
             if already_used_help:
-                print("\033[33mMár használtál egy felezést ennél a kérdésnél!\033[0m\n")
+                print(c.warning("Már használtál egy felezést ennél a kérdésnél!\n"))
                 continue
             help_count -= 1
             num_of_choices = len(answers_picked_dict)
@@ -111,22 +125,22 @@ def ask_questions(question: list, question_type: str) -> int:
                     continue
                 answers_picked_dict.pop(answer_to_dismiss)
             already_used_help = True
-            print("\033[33mFeleztél! Az alábbi lehetőségek maradtak:\033[0m")
+            print(c.info("Feleztél! Az alábbi lehetőségek maradtak:"))
             continue
         elif your_answer in answers_picked_dict.keys():
             your_answer = answers_picked_dict[your_answer]
             already_used_help = False
             break
         else:
-            print("\033[33mNem lehetséges válaszlehetőség!\033[0m")
+            print(c.warning("Nem lehetséges válaszlehetőség!"))
     return your_answer, right_answer
 
 
 #  A válaszok kiértékelése, vizuális visszajelzés, pontszám visszaadása
 def check_answer(your_answer, right_answer):
     if your_answer == right_answer:
-        print(f"\033[32m\u2588\u2588\033[0m\n") # Zöld kocka kiíratása ha helyes a válasz
+        print(c.col(f"\u2588\u2588\n", c.C.GREEN)) # Zöld kocka kiíratása ha helyes a válasz
         return 1
     else:
-        print(f"\033[31m\u2588\u2588\033[0m\n") # Piros kocka kiíratása ha helytelen a válasz
+        print(c.col(f"\u2588\u2588\n", c.C.RED)) # Piros kocka kiíratása ha helytelen a válasz
         return 0
