@@ -11,23 +11,24 @@ import json
 #  Fő futási ciklus
 def run_game():
     points = 0
+    help_count = settings.HELP_COUNT
     show_welcome_screen()
     question_type = get_question_type()
     questions_data = load_questions(question_type)
     num_of_questions = get_num_of_questions(len(questions_data), question_type)
-    num_of_choices = get_num_of_choices(settings.MIN_CHOICE, settings.MAX_CHOICE)
+    num_of_choices = get_difficulty()
     questions = generate_questions(num_of_questions, num_of_choices, questions_data)
 
     start_time = time.time() # Timer indítása
     track_progress = []
-    for question in questions:
-        answer, right_answer = ask_questions(question, question_type)
+    for i in range(len(questions)):
+        answer, right_answer, help_count = ask_questions(questions[i], question_type, help_count, i)
         if check_answer(answer, right_answer):
             points += 1
             track_progress.append(True)
         else:
             track_progress.append(False)
-        time.sleep(1)
+        time.sleep(1.2)
         show_welcome_screen()
     end_time = time.time() 
     total_time = round(end_time - start_time) # Timer vége + kalkuláció
@@ -42,15 +43,15 @@ def show_welcome_screen():
 
 #  Kérdéstípus választási lehetőség
 def get_question_type() -> str:
-    print(c.highlight("Válassz az alábbi témakörök közül:\n"))
-    print(f"\tA: {cat.Cat.capitals.value}")
-    print(f"\tB: {cat.Cat.cars.value}")
-    print(f"\tC: {cat.Cat.songs_hu.value}")
-    print(f"\tD: {cat.Cat.songs_int.value}")
+    print(c.highlight("\tVálassz az alábbi témakörök közül:\n"))
+    print(f"\t\tA: {cat.Cat.capitals.value}")
+    print(f"\t\tB: {cat.Cat.cars.value}")
+    print(f"\t\tC: {cat.Cat.songs_hu.value}")
+    print(f"\t\tD: {cat.Cat.songs_int.value}")
     while True:
-        user_input = input("--> ")
+        user_input = input("\t--> ")
         if user_input.lower() not in "abcd":
-            print(c.warning('"A", "B", "C" vagy "D" választási lehetőséged van!'))
+            print(c.warning('\t"A", "B", "C" vagy "D" választási lehetőséged van!'))
             continue
         break
     match user_input.lower():
@@ -69,47 +70,55 @@ def get_question_type() -> str:
 def load_questions(question_type):
     try:
         with open("./quizes/" + question_type.name + ".json", "r", encoding="utf-8") as file:
-            raw_data = json.load(file)
+            try:
+                raw_data = json.load(file)
+            except json.JSONDecodeError as e:
+                print(c.error("\tHIBA! Érvénytelen JSON formátum!"))
+                exit()
         return raw_data
     except FileNotFoundError:
-        print(c.error("HIBA! A kérdésfájl nem található!"))
+        print(c.error("\tHIBA! A kérdésfájl nem található!"))
         exit()
 
 
 #  A kérdések számának bekérése
-def get_num_of_questions(max: int, question_type: str) -> int:
+def get_num_of_questions(max: int, question_type: cat.Cat) -> int:
     show_welcome_screen()
-    print(c.highlight(f"A választott kategória: {question_type.value}\n"))
+    print(c.highlight(f"\tA választott kategória: {question_type.value}\n"))
     while True:
         try:
-            num_of_questions = int(input("Hány kérdést szeretnél? "))
-            if num_of_questions < 1:
-                print(c.warning(f"Ez túl kevés lesz, nem?"))
+            num_of_questions = int(input("\tHány kérdést szeretnél? "))
+            if num_of_questions < 2:
+                print(c.warning(f"\tEz túl kevés lesz, nem?"))
                 continue
             if num_of_questions > max:
-                print(c.warning(f"Maximum {max} kérdést választhatsz!"))
+                print(c.warning(f"\tMaximum {max} kérdést választhatsz!"))
                 continue
             else:
                 return num_of_questions
         except ValueError:
-            print(c.error("Egész számot adj meg!"))
+            print(c.error("\tEgész számot adj meg!"))
 
 
 #  A választási lehetőségek számának bekérése
-def get_num_of_choices(min: int, max: int) -> int:
+def get_difficulty() -> int:
+    print(c.info("\tVálassz nehézségi szintet:"))
+    print(c.ok("\t\t1. Könnyű"),c.warning("\t2. Közepes"),c.error("\t3. Nehéz"))
     while True:
-        try:
-            num_of_choices = int(input(f"Hány választási lehetőséget szeretnél [{min}-{max}]? "))
-            if (min <= num_of_choices <= max) and (num_of_choices % 2 == 0):
-                input(c.info("Üss [Enter]-t a kezdéshez"))
-                system("cls")
-                show_welcome_screen()
-                return num_of_choices
-            else:
-                print(c.warning(f"A választási lehetőségek száma {min} és {max} közötti páros szám lehet!"))
-                continue
-        except ValueError:
-            print(c.error("Egész számot adj meg!"))
+        num_of_choices = input("\t--> ")
+        if num_of_choices not in ["1","2","3"]:
+            print(c.warning("\tVálassz egy számot: 1-2-3"))
+            continue
+        else:
+            match num_of_choices:
+                case "1": num_of_choices = 4
+                case "2": num_of_choices = 6
+                case "3": num_of_choices = 8
+            break
+    input(c.info("\tÜss egy [Enter]-t és kezdünk"))
+    system("cls")
+    show_welcome_screen()
+    return num_of_choices
 
 
 #  A bekért mennyiségű kvízkérdés generálása bekért mennyiségű válaszlehetőséggel
@@ -127,29 +136,34 @@ def generate_questions(qty: int, num_of_choices: int, questions_data: dict) -> t
 
 
 #  A kérdések feltétele, a felhasználói válasz és a jó válasz visszaadásával
-def ask_questions(question: list, question_type: str) -> int:
-    help_count = settings.HELP_COUNT
+def ask_questions(question: list, question_type: cat.Cat, help_count: int, act_question) -> list[str]:
+    act_question += 1
     question_topic, right_answer, choices_picked = question
     answers_picked_dict = { chr(ord("A") + i): choices_picked[i] for i in range(len(choices_picked)) }
     already_used_help = False
     while True:
         match question_type.name:
             case "capitals":
-                print(f"Mi {c.highlight(question_topic)} fővárosa?")
+                print(f"\t{act_question}. Mi {c.highlight(question_topic)} fővárosa?")
             case "cars":
-                print(f"Melyik a jellemző modellje a(z) {c.highlight(question_topic)} autómárkának?")
+                print(f"\t{act_question}. Melyik a jellemző modellje a(z) {c.highlight(question_topic)} autómárkának?")
             case "songs_hu" | "songs_int":
-                print(f"Melyik a(z) {c.highlight(question_topic)} egyik ismert dala?")
+                print(f"\t{act_question}. Melyik a(z) {c.highlight(question_topic)} egyik ismert dala?")
+        if already_used_help: print(c.info("\tFeleztél! Az alábbi lehetőségek maradtak:"))
         for letter, item in answers_picked_dict.items():
-            print(f"\t{letter}. {item}")
-        if help_count: print(c.info(f'Felező segítség ({help_count}db) használata: "/2"'))
-        your_answer = input("Tipped --> ").upper()
-        if your_answer == "/2":
+            print(f"\t\t{letter}. {item}")
+        if help_count and not already_used_help: print(c.info(f'\tFelező segítség ({help_count}db) használata: "/"'))
+        your_answer = input("\tTipped --> ").upper()
+        if your_answer == "/":
             if help_count == 0:
-                print(c.warning("Nincs több felezési lehetőséged!\n"))
+                print(c.warning("\tNincs több felezési lehetőséged!\n"))
+                time.sleep(1.2)
+                show_welcome_screen()
                 continue
             if already_used_help:
-                print(c.warning("Már használtál egy felezést ennél a kérdésnél!\n"))
+                print(c.warning("\tMár használtál egy felezést ennél a kérdésnél!\n"))
+                time.sleep(1.2)
+                show_welcome_screen()
                 continue
             help_count -= 1
             num_of_choices = len(answers_picked_dict)
@@ -159,33 +173,35 @@ def ask_questions(question: list, question_type: str) -> int:
                     continue
                 answers_picked_dict.pop(answer_to_dismiss)
             already_used_help = True
-            print(c.info("Feleztél! Az alábbi lehetőségek maradtak:"))
+            show_welcome_screen()
             continue
         elif your_answer in answers_picked_dict.keys():
             your_answer = answers_picked_dict[your_answer]
             already_used_help = False
             break
         else:
-            print(c.warning("Nem lehetséges válaszlehetőség!"))
-    return your_answer, right_answer
+            print(c.warning("\tNem lehetséges válaszlehetőség!"))
+            time.sleep(1.2)
+            show_welcome_screen()
+    return your_answer, right_answer, help_count
 
 
 #  A válaszok kiértékelése, vizuális visszajelzés, pontszám visszaadása
 def check_answer(your_answer, right_answer):
     if your_answer == right_answer:
-        print(c.col(f"\u2588\u2588", c.C.GREEN)) # Zöld kocka kiíratása ha helyes a válasz
+        print(c.col(f"\t\u2588\u2588", c.C.GREEN)) # Zöld kocka kiíratása ha helyes a válasz
         return True
     else:
-        print(c.col(f"\u2588\u2588", c.C.RED)) # Piros kocka kiíratása ha helytelen a válasz
+        print(c.col(f"\t\u2588\u2588", c.C.RED)) # Piros kocka kiíratása ha helytelen a válasz
         return False
     
 def show_results(progress: list, total_time, points, num_of_questions) -> None:
     progress_bar = reduce(lambda x, y: x + y, [c.col(f"\u2588\u2588", c.C.GREEN) if item else c.col(f"\u2588\u2588", c.C.RED) for item in progress])
     percentage = f"{100 * points / num_of_questions:.1f}%"
-    dashes = c.col(str('-' * (len(progress_bar)//8 + len(percentage)+13)), c.C.YELLOW)
+    dashes = c.col("\t"+str('-' * (len(progress_bar)//8 + len(percentage)+13)), c.C.YELLOW)
     print(dashes)
-    print(f"{c.col("Eredményed:", c.C.YELLOW)} {progress_bar} {c.col(percentage, c.C.YELLOW)}")
+    print(f"{c.col("\tEredményed:", c.C.YELLOW)} {progress_bar} {c.col(percentage, c.C.YELLOW)}")
     print(dashes)
     minutes, seconds = divmod(total_time, 60) # Időeredmény kiírása mm:ss formátumban
-    print(c.col(f"Játékidőd: {minutes:02}:{seconds:02}", c.C.YELLOW))
+    print(c.col(f"\tJátékidőd: {minutes:02}:{seconds:02}", c.C.YELLOW))
     print(dashes  + "\n")
