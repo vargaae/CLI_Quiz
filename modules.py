@@ -1,10 +1,11 @@
-import settings
-import json
-from ascii import ascii_art
 import colors_cli as c
-from os import system
-from functools import reduce
+import settings
+import time
+import json
 from random import choice, shuffle, sample
+from functools import reduce
+from ascii import ascii_art
+from os import system
 
 
 def show_welcome_screen():
@@ -153,4 +154,29 @@ def show_results(progress: list, total_time, points, num_of_questions) -> None:
     print(f"{c.col("Eredményed:", c.C.YELLOW)} {progress_bar} {c.col(percentage, c.C.YELLOW)}")
     print(c.col(str('-' * (len(progress_bar)//8+18)), c.C.YELLOW))
     minutes, seconds = divmod(total_time, 60) # Időeredmény kiírása mm:ss formátumban
-    print(c.col(f"Játékidőd: {minutes:02}:{seconds:02}", c.C.YELLOW))
+    print(c.col(f"Játékidőd: {minutes:02}:{seconds:02}", c.C.YELLOW) + "\n")
+
+
+def run_game():
+    points = 0
+    show_welcome_screen()
+    question_type = get_question_type()
+    questions_data = load_questions(question_type)
+    num_of_questions = get_num_of_questions(len(questions_data))
+    num_of_choices = get_num_of_choices(settings.MIN_CHOICE, settings.MAX_CHOICE)
+    questions = generate_questions(num_of_questions, num_of_choices, questions_data)
+
+    start_time = time.time() # Timer indítása
+    track_progress = []
+    for question in questions:
+        answer, right_answer = ask_questions(question, question_type)
+        if check_answer(answer, right_answer):
+            points += 1
+            track_progress.append(True)
+        else:
+            track_progress.append(False)
+        time.sleep(1)
+        show_welcome_screen()
+    end_time = time.time() 
+    total_time = round(end_time - start_time) # Timer vége + kalkuláció
+    show_results(track_progress, total_time, points, num_of_questions)
