@@ -1,0 +1,62 @@
+[
+    {
+        "question": "What is the output of print(2 * 3 ** 3)?",
+        "options": ["54", "18", "36", "24"],
+        "answer": "54",
+        "hint": "Remember operator precedence: exponentiation before multiplication."
+    },
+    {
+        "question": "Which of the following is used to define a function in Python?",
+        "options": ["func", "define", "def", "function"],
+        "answer": "def",
+        "hint": "Functions in Python start with a keyword that is three letters long."
+    },
+    {
+        "question": "Which data type is mutable in Python?",
+        "options": ["Tuple", "String", "List", "Integer"],
+        "answer": "List",
+        "hint": "Think about which data structure allows modification after creation."
+    },
+    {
+        "question": "What is the output of bool([])?",
+        "options": ["True", "False", "None", "Error"],
+        "answer": "False",
+        "hint": "Empty objects in Python generally evaluate to this boolean value."
+    },
+    {
+        "question": "Which module is used for random number generation in Python?",
+        "options": ["random", "rand", "math", "numpy"],
+        "answer": "random",
+        "hint": "The module name is the same as the word for unpredictability."
+    },
+    {
+        "question": "How do you start a comment in Python?",
+        "options": ["//", "/*", "#", "--"],
+        "answer": "#",
+        "hint": "It's a single-character symbol used at the beginning of a line."
+    },
+    {
+        "question": "Which keyword is used to handle exceptions in Python?",
+        "options": ["error", "except", "catch", "try"],
+        "answer": "except",
+        "hint": "This keyword often follows 'try' in exception handling."
+    },
+    {
+        "question": "Which function is used to get user input in Python?",
+        "options": ["scan()", "read()", "input()", "get()"],
+        "answer": "input()",
+        "hint": "It's a built-in function that waits for user response."
+    },
+    {
+        "question": "What is the output of len(\"Hello\")?",
+        "options": ["4", "5", "6", "None"],
+        "answer": "5",
+        "hint": "Count the number of characters, including letters and spaces."
+    },
+    {
+        "question": "What will print(type([])) return?",
+        "options": ["<class 'list'>", "<class 'dict'>", "<class 'tuple'>", "<class 'set'>"],
+        "answer": "<class 'list'>",
+        "hint": "Empty square brackets define this data structure."
+    }
+]
