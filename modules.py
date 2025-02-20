@@ -140,16 +140,17 @@ def ask_questions(question: list, question_type: str) -> int:
 #  A válaszok kiértékelése, vizuális visszajelzés, pontszám visszaadása
 def check_answer(your_answer, right_answer):
     if your_answer == right_answer:
-        print(c.col(f"\u2588\u2588\n", c.C.GREEN)) # Zöld kocka kiíratása ha helyes a válasz
+        print(c.col(f"\u2588\u2588", c.C.GREEN)) # Zöld kocka kiíratása ha helyes a válasz
         return True
     else:
-        print(c.col(f"\u2588\u2588\n", c.C.RED)) # Piros kocka kiíratása ha helytelen a válasz
+        print(c.col(f"\u2588\u2588", c.C.RED)) # Piros kocka kiíratása ha helytelen a válasz
         return False
     
 def show_results(progress: list, total_time, points, num_of_questions) -> None:
     progress_bar = reduce(lambda x, y: x + y, [c.col(f"\u2588\u2588", c.C.GREEN) if item else c.col(f"\u2588\u2588", c.C.RED) for item in progress])
     percentage = f"{100 * points / num_of_questions:.1f}%"
-    print(f"{c.col("Eredményed:", c.C.YELLOW)} {progress_bar} {c.col(percentage, c.C.YELLOW)}\n")
+    print(c.col(str('-' * (len(progress_bar)//8+18)), c.C.YELLOW))
+    print(f"{c.col("Eredményed:", c.C.YELLOW)} {progress_bar} {c.col(percentage, c.C.YELLOW)}")
+    print(c.col(str('-' * (len(progress_bar)//8+18)), c.C.YELLOW))
     minutes, seconds = divmod(total_time, 60) # Időeredmény kiírása mm:ss formátumban
-    print(c.col(f"-------------------------\nGratulálok!", c.C.YELLOW)) # TODO Észrevétel: csak akkor kéne gratulálni ha az eredmény kifejezetten jó
     print(c.col(f"Játékidőd: {minutes:02}:{seconds:02}", c.C.YELLOW))
