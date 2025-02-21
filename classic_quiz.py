@@ -1,9 +1,14 @@
 import random
 import time
 import json
+# from modules import question_type
+import categories as cat
 
 class QuizGame:
-    def __init__(self, filename="questions.json"):
+    # with open("./quizes/" + question_type.name + ".json", "r", encoding="utf-8") as file:
+    question_type = cat.Cat.capitals
+    # def __init__(self, filename='"./quizes/" + question_type.name + ".json"'):
+    def __init__(self, filename="./quizes/pyquestions.json"):
         self.filename = filename
         self.questions = self.load_questions()
         self.score = 0

@@ -7,6 +7,8 @@ import colors_cli as c
 import settings
 import time
 import json
+from classic_quiz import QuizGame
+
 
 #  Fő futási ciklus
 def run_game():
@@ -17,7 +19,7 @@ def run_game():
     questions_data = load_questions(question_type)
     num_of_questions = get_num_of_questions(len(questions_data), question_type)
     num_of_choices = get_difficulty()
-    questions = generate_questions(num_of_questions, num_of_choices, questions_data)
+    questions = generate_questions(question_type, num_of_questions, num_of_choices, questions_data)
 
     start_time = time.time() # Timer indítása
     track_progress = []
@@ -48,10 +50,11 @@ def get_question_type() -> str:
     print(f"\t\tB: {cat.Cat.cars.value}")
     print(f"\t\tC: {cat.Cat.songs_hu.value}")
     print(f"\t\tD: {cat.Cat.songs_int.value}")
+    print(f"\t\tE: {cat.Cat.pyquestions.value}")
     while True:
         user_input = input("\t--> ")
-        if user_input.lower() not in "abcd":
-            print(c.warning('\t"A", "B", "C" vagy "D" választási lehetőséged van!'))
+        if user_input.lower() not in "abcde":
+            print(c.warning('\t"A", "B", "C", "D" vagy "E" választási lehetőséged van!'))
             continue
         break
     match user_input.lower():
@@ -63,6 +66,8 @@ def get_question_type() -> str:
             question_type = cat.Cat.songs_hu
         case "d":
             question_type = cat.Cat.songs_int
+        case "e":
+            question_type = cat.Cat.pyquestions
     return question_type
 
 
@@ -122,17 +127,22 @@ def get_difficulty() -> int:
 
 
 #  A bekért mennyiségű kvízkérdés generálása bekért mennyiségű válaszlehetőséggel
-def generate_questions(qty: int, num_of_choices: int, questions_data: dict) -> tuple[str, str, list[str]]:
-    questions = []
-    for question_subject in sample(list(questions_data.keys()), qty):
-        right_answer = questions_data[question_subject]
-        wrong_answers = list(questions_data.values())
-        wrong_answers.remove(right_answer)
-        answers_picked = sample(wrong_answers, num_of_choices - 1)
-        answers_picked.append(right_answer)
-        shuffle(answers_picked)
-        questions.append((question_subject, right_answer, answers_picked))
-    return questions
+def generate_questions(question_type, qty: int, num_of_choices: int, questions_data: dict) -> tuple[str, str, list[str]]:
+    # TODO: ITT kezdődik a módosítás: Ha Python vizsga kérdéseket választja a User, akkor a classic_quiz\ QuizGame-ból kell hívni a play() metódust, tehát egy külön ágra fut, aminek a felületét az alaphoz kell igazítani
+    if (question_type == cat.Cat.pyquestions):
+        game = QuizGame()
+        game.play()
+    else:
+        questions = []
+        for question_subject in sample(list(questions_data.keys()), qty):
+            right_answer = questions_data[question_subject]
+            wrong_answers = list(questions_data.values())
+            wrong_answers.remove(right_answer)
+            answers_picked = sample(wrong_answers, num_of_choices - 1)
+            answers_picked.append(right_answer)
+            shuffle(answers_picked)
+            questions.append((question_subject, right_answer, answers_picked))
+        return questions
 
 
 #  A kérdések feltétele, a felhasználói válasz és a jó válasz visszaadásával
@@ -143,6 +153,8 @@ def ask_questions(question: list, question_type: cat.Cat, help_count: int, act_q
     already_used_help = False
     while True:
         match question_type.name:
+            case "pyquestions":
+                print(f"\t{act_question}. {c.highlight(question_topic)} következnek:")
             case "capitals":
                 print(f"\t{act_question}. Mi {c.highlight(question_topic)} fővárosa?")
             case "cars":
