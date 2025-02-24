@@ -1,3 +1,4 @@
+# DEVELOP/FEJLESZTÉSI Próba Branch egyesítés előtti verzió ->implementálás kidolgozásához
 # 🧠 KVÍZJÁTÉK 🏆
 ## CLI felületű többféle kérdéstípust vegyesen tartalmazó kvízjáték
 ### Futtatáshoz szükséges:
