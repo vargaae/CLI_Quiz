@@ -19,6 +19,8 @@ def run_game():
     help_count = settings.HELP_COUNT
     show_welcome_screen()
     question_type = get_question_type()
+    
+    # TODO: INNEN
     questions_data = load_questions(question_type)
     num_of_questions = get_num_of_questions(len(questions_data), question_type)
     num_of_choices = get_difficulty()
@@ -38,6 +40,9 @@ def run_game():
             track_progress.append(False)
             win_streak = 0
         time.sleep(1.2)
+        
+    # TODO: IDE: total time pipa, track progress->true/false lista, points
+        
     end_time = time.time() 
     total_time = round(end_time - start_time) # Timer vége + kalkuláció
     percentage, gametime = show_results(track_progress, total_time, points)
@@ -114,17 +119,55 @@ def get_difficulty(quiz_type) -> int:
 
 
 #  A bekért mennyiségű kvízkérdés generálása bekért mennyiségű válaszlehetőséggel
-def generate_questions(qty: int, num_of_choices: int, questions_data: dict) -> tuple[str, str, list[str]]:
-    questions = []
-    for question_subject in sample(list(questions_data.keys()), qty):
-        right_answer = questions_data[question_subject]
-        wrong_answers = list(questions_data.values())
-        wrong_answers.remove(right_answer)
-        answers_picked = sample(wrong_answers, num_of_choices - 1)
-        answers_picked.append(right_answer)
-        shuffle(answers_picked)
-        questions.append((question_subject, right_answer, answers_picked))
+def generate_questions(questions, qty: int, num_of_choices: int, questions_data: dict) -> tuple[str, str, list[str]]:
+    # questions = []
+    # for question_subject in sample(list(questions_data.keys()), qty):
+    #     right_answer = questions_data[question_subject]
+    #     wrong_answers = list(questions_data.values())
+    #     wrong_answers.remove(right_answer)
+    #     answers_picked = sample(wrong_answers, num_of_choices - 1)
+    #     answers_picked.append(right_answer)
+    #     shuffle(answers_picked)
+    #     questions.append((question_subject, right_answer, answers_picked))
+    # return questions
+# TODO: Én verzióm:
+    # questions = []
+    for i, question in enumerate(self.questions[:num_of_questions], start=1):
+# for i, question in enumerate(self.questions[:10], start=1):
+        print(f"\nQuestion {i}: {question['question']}")
+    options, correct_index = self.shuffle_answers(question)
+    
+    for idx, option in enumerate(options, start=1):
+        print(f"{chr(96 + idx)}) {option}")
+    # for question_subject in sample(list(questions_data.keys()), qty):
+    for question in questions:
+        right_answer = question.answer # question_subject->question
+
+        answers_picked = question.options # options
+        shuffle(answers_picked) # keverés? > ignore
+        questions.append((question.question, right_answer, answers_picked))
     return questions
+
+#  A bekért mennyiségű kvízkérdés generálása bekért mennyiségű válaszlehetőséggel
+# def generate_questions(question_type, qty: int, num_of_choices: int, questions_data: dict) -> tuple[str, str, list[str]]:
+#     # TODO: ITT kezdődik a módosítás: Ha Python vizsga kérdéseket választja a User, akkor a classic_quiz\ ClassicQuizGame-ból kell hívni a play() metódust, tehát egy külön ágra fut, aminek a felületét az alaphoz kell igazítani
+#     if (question_type == cat.Cat.python_learning):
+#         questions = []
+#         game = ClassicQuizGame()
+#         # TODO: átadni a question_type-ot -> question_loader.py
+#         game.play(qty, num_of_choices)
+#         return questions
+#     else:
+#         questions = []
+#         for question_subject in sample(list(questions_data.keys()), qty):
+#             right_answer = questions_data[question_subject]
+#             wrong_answers = list(questions_data.values())
+#             wrong_answers.remove(right_answer)
+#             answers_picked = sample(wrong_answers, num_of_choices - 1)
+#             answers_picked.append(right_answer)
+#             shuffle(answers_picked)
+#             questions.append((question_subject, right_answer, answers_picked))
+#         return questions
 
 
 #  A kérdések feltétele, a felhasználói válasz és a jó válasz visszaadásával
