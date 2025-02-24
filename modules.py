@@ -245,7 +245,7 @@ def check_for_new_highscore(highscores, quiz_type, percentage, gametime):
 
 #  Eredmény beszúrása a highscore táblába és mentés fle-ba
 def add_highscore(highscores, quiz_type, new_highscore_index, percentage, gametime):
-    print(c.highlight("\tGratulálok az eredményed benne van a TOP5-ben!"))
+    print(c.highlight(f"\tGratulálok, az eredményed benne van a(z) {quiz_type.value} kategória TOP 5-ben!"))
     name = input(c.highlight("\tAdd meg a neved: "))
     new_entry = {"name": name, "percentage": percentage, "gametime": gametime}
     if new_highscore_index == -1:
@@ -260,7 +260,7 @@ def add_highscore(highscores, quiz_type, new_highscore_index, percentage, gameti
 #  Highscore táblázat kiíratása
 def show_highscores(highscores, quiz_type):
     show_splash_screen()
-    print(c.info(f"{'TOP 5 helyezett':^102}\n"))
+    print(c.info(f"{f'{quiz_type.value} TOP 5 helyezett':^102}\n"))
     print(c.info(f'{f"{'Név:':<15}{'Százalék:':^15}{'Idő:':>8}":^100}'))
     print(c.info(f'{("-" * 38):^100}'))
     for i in range(len(highscores[quiz_type.name])):
