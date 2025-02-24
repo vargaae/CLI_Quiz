@@ -1,3 +1,4 @@
+# DEV-MERGE/FEJLESZTÉSI Próba Branch egyesítéshez
 # 🧠 KVÍZJÁTÉK 🏆
 ## CLI felületű többféle kérdéstípust vegyesen tartalmazó kvízjáték
 ### Futtatáshoz szükséges:
