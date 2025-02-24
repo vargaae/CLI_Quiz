@@ -1,7 +1,7 @@
 from random import choice, shuffle, sample
 from functools import reduce
 from ascii import ascii_art
-from os import system
+from os import system, name as OSname
 import categories as cat
 import colors_cli as c
 import settings
@@ -42,7 +42,7 @@ def run_game():
 
 #  Splash screen
 def show_splash_screen():
-    system("cls")
+    system("cls" if OSname == "nt" else "clear")
     print(c.col(ascii_art, c.C.PURPLE))
 
 
