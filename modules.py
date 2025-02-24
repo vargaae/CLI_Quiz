@@ -12,35 +12,32 @@ import json
 def run_game():
     points = 0
     win_streak = 0
-    act_streak = 0
+    win_streak = 0
     help_count = settings.HELP_COUNT
-    show_splash_screen()
-    question_type = get_question_type()
-    questions_data = load_questions(question_type)
-    num_of_choices = get_difficulty(question_type)
-    questions = generate_questions(num_of_choices, questions_data)
+    quiz_type = get_quiz_type()
+    quiz_data = load_questions(quiz_type)
+    num_of_choices = get_difficulty(quiz_type)
+    questions = generate_questions(num_of_choices, quiz_data)
 
     start_time = time.time() # Timer indítása
     track_progress = []
     for i in range(settings.QUESTION_COUNT):
-        answer, right_answer, help_count = ask_questions(questions[i], question_type, help_count, i, act_streak)
+        answer, right_answer, help_count = ask_questions(questions[i], quiz_type, help_count, i, win_streak)
         if check_answer(answer, right_answer):
             track_progress.append(True)
             points += 1
-            act_streak += 1
-            if act_streak and act_streak % 5 == 0:
+            win_streak += 1
+            if win_streak and win_streak % 5 == 0:
                 help_count += 1
-            if act_streak > win_streak:
-                win_streak = act_streak
         else:
             track_progress.append(False)
-            act_streak = 0
+            win_streak = 0
         time.sleep(1.2)
     end_time = time.time() 
     total_time = round(end_time - start_time) # Timer vége + kalkuláció
     percentage, gametime = show_results(track_progress, total_time, points)
-    highscores = check_for_new_highscore(load_highscores(), percentage, gametime)
-    show_highscores(highscores)
+    highscores = check_for_new_highscore(load_highscores(), quiz_type, percentage, gametime)
+    show_highscores(highscores, quiz_type)
 
 
 #  Splash screen
@@ -50,34 +47,36 @@ def show_splash_screen():
 
 
 #  Kérdéstípus választási lehetőség
-def get_question_type() -> str:
-    print(c.highlight("\tVálassz az alábbi témakörök közül:\n"))
-    print(f"\t\tA: {cat.Cat.capitals.value}")
-    print(f"\t\tB: {cat.Cat.cars.value}")
-    print(f"\t\tC: {cat.Cat.songs_hu.value}")
-    print(f"\t\tD: {cat.Cat.songs_int.value}")
+def get_quiz_type() -> str:
     while True:
+        show_splash_screen()
+        print(c.highlight("\tVálassz az alábbi témakörök közül:\n"))
+        print(f"\t\tA: {cat.Cat.capitals.value}")
+        print(f"\t\tB: {cat.Cat.cars.value}")
+        print(f"\t\tC: {cat.Cat.songs_hu.value}")
+        print(f"\t\tD: {cat.Cat.songs_int.value}")
         user_input = input("\t--> ")
         if user_input.lower() not in "abcd" or user_input == "":
-            print(c.warning('\t"A", "B", "C" vagy "D" választási lehetőséged van!'))
+            print(c.warning("\tA-B-C-D választási lehetőséged van!"))
+            time.sleep(1.2)
             continue
         break
     match user_input.lower():
         case "a":
-            question_type = cat.Cat.capitals
+            quiz_type = cat.Cat.capitals
         case "b":
-            question_type = cat.Cat.cars
+            quiz_type = cat.Cat.cars
         case "c":
-            question_type = cat.Cat.songs_hu
+            quiz_type = cat.Cat.songs_hu
         case "d":
-            question_type = cat.Cat.songs_int
-    return question_type
+            quiz_type = cat.Cat.songs_int
+    return quiz_type
 
 
 #  Adatok beolvasása JSON fájlból
-def load_questions(question_type):
+def load_questions(quiz_type):
     try:
-        with open("./quizes/" + question_type.name + ".json", encoding="utf-8") as file:
+        with open("./quizes/" + quiz_type.name + ".json", encoding="utf-8") as file:
             try:
                 raw_data = json.load(file)
             except json.JSONDecodeError as e:
@@ -90,15 +89,16 @@ def load_questions(question_type):
 
 
 #  A választási lehetőségek számának bekérése
-def get_difficulty(question_type) -> int:
-    show_splash_screen()
-    print(c.highlight(f"\tA választott kategória: {question_type.value}\n\n"))
-    print(c.info("\tVálassz nehézségi szintet:\n"))
-    print(c.ok("\t\t1. Könnyű"), c.warning("\t2. Közepes"), c.error("\t3. Nehéz"), "\n")
+def get_difficulty(quiz_type) -> int:
     while True:
+        show_splash_screen()
+        print(c.highlight(f"\tA választott kategória: {quiz_type.value}\n\n"))
+        print(c.info("\tVálassz nehézségi szintet:\n"))
+        print(c.ok("\t\t1. Könnyű"), c.warning("\t2. Közepes"), c.error("\t3. Nehéz"), "\n")
         num_of_choices = input("\t--> ")
         if num_of_choices not in ["1","2","3"]:
             print(c.warning("\tVálassz egy számot: 1-2-3"))
+            time.sleep(1.2)
             continue
         else:
             match num_of_choices:
@@ -106,16 +106,16 @@ def get_difficulty(question_type) -> int:
                 case "2": num_of_choices = 6
                 case "3": num_of_choices = 8
             break
-    input(c.info("\n\tÜss egy [Enter]-t és kezdünk"))
+    input(c.info("\n\tÜss egy [Enter]-t és kezdünk!"))
     return num_of_choices
 
 
 #  A bekért mennyiségű kvízkérdés generálása bekért mennyiségű válaszlehetőséggel
-def generate_questions(num_of_choices: int, questions_data: dict) -> tuple[str, str, list[str]]:
+def generate_questions(num_of_choices: int, quiz_data: dict) -> tuple[str, str, list[str]]:
     questions = []
-    for question_subject in sample(list(questions_data.keys()), settings.QUESTION_COUNT):
-        right_answer = questions_data[question_subject]
-        wrong_answers = list(questions_data.values())
+    for question_subject in sample(list(quiz_data.keys()), settings.QUESTION_COUNT):
+        right_answer = quiz_data[question_subject]
+        wrong_answers = list(quiz_data.values())
         wrong_answers.remove(right_answer)
         answers_picked = sample(wrong_answers, num_of_choices - 1)
         answers_picked.append(right_answer)
@@ -125,7 +125,7 @@ def generate_questions(num_of_choices: int, questions_data: dict) -> tuple[str, 
 
 
 #  A kérdések feltétele, a felhasználói válasz és a jó válasz visszaadásával
-def ask_questions(question: list, question_type: cat.Cat, help_count: int, act_question, act_streak: int) -> list[str]:
+def ask_questions(question: list, quiz_type: cat.Cat, help_count: int, act_question, win_streak: int) -> list[str]:
     act_question += 1
     question_topic, right_answer, choices_picked = question
     answers_picked_dict = { chr(ord("A") + i): choices_picked[i] for i in range(len(choices_picked)) }
@@ -133,7 +133,7 @@ def ask_questions(question: list, question_type: cat.Cat, help_count: int, act_q
     while True:
         show_splash_screen()
         print(f"\t{act_question}/{settings.QUESTION_COUNT}. ", end="")
-        match question_type.name:
+        match quiz_type.name:
             case "capitals":
                 print(f"Mi {c.highlight(question_topic)} fővárosa?")
             case "cars":
@@ -146,14 +146,13 @@ def ask_questions(question: list, question_type: cat.Cat, help_count: int, act_q
         if help_count and not already_used_help: 
             match help_count:
                 case 2|3|4|5: print(c.info(f"{'Felező "/": ' + c.ok(str(help_count) + 'db'):>90}"))
-                case 1: print(c.info(f"{'Felező "/": ' + c.warning(str(help_count) + 'db'):>90}"))
-                case _: print(c.info(f"{'Felező "/": ' + c.error(str(help_count) + 'db'):>90}"))
+                case 1: print(c.info(f"{'Felező "/": ' + c.warning(str(help_count) + 'db'):>91}"))
+                case _: print(c.info(f"{'Felező "/": ' + c.error(str(help_count) + 'db'):>91}"))
             
-        match act_streak % 5:
-            case 3: print_streak = f'{c.info("Win streak: ") + c.warning(str(act_streak) + "x")}'
-            case 4: print_streak = f'{c.info("Win streak: ") + c.error(str(act_streak) + "x")}'
-            case _: print_streak = f'{c.info("Win streak: ") + c.ok(str(act_streak) + "x")}'
-        print(f"{print_streak:>102}")
+        match win_streak % 5:
+            case 3: print(f"{f'{c.info("Win streak: ") + c.warning(str(win_streak) + "x")}':>105}")
+            case 4: print(f"{f'{c.info("Win streak: ") + c.error(str(win_streak) + "x")}':>105}")
+            case _: print(f"{f'{c.info("Win streak: ") + c.ok(str(win_streak) + "x")}':>104}")
         your_answer = input("\tTipped --> ").upper()
         if your_answer == "/":
             if help_count == 0:
@@ -208,67 +207,73 @@ def show_results(progress: list, total_time, points) -> None:
     return percentage, total_time
 
 
+#  Highscore-ok betöltése
 def load_highscores() -> list:
     try:
-        with open("highscores.txt", encoding="utf-8") as file:
-            highscores = []
-            for row in file:
-                data = row.strip().split(";")
-                entry = {
-                    "name": data[0],
-                    "percentage": int(data[1]),
-                    "gametime": int(data[2])
-                }
-                highscores.append(entry)
-            return highscores[:5]
+        with open("highscores.json", encoding="utf-8") as file:
+            try:
+                highscores = json.load(file)
+                return highscores["highscores"]
+            except json.JSONDecodeError:
+                return {}
     except FileNotFoundError:
-        return None
+        return {}
 
 
-def check_for_new_highscore(highscores, percentage, gametime):
+#  Elért eredmény ellenőrzése, hogy befér-e a highscore táblába
+def check_for_new_highscore(highscores, quiz_type, percentage, gametime):
     new_highscore_index = -1
-    if highscores == None:
-        highscores = add_highscore([], 0, percentage, gametime)
-    elif len(highscores) > 0:
-        for i in range(len(highscores)):
-            if percentage > highscores[i]["percentage"]:
+    if quiz_type.name not in highscores:
+        highscores = add_highscore(highscores, quiz_type, -1, percentage, gametime)
+    elif len(highscores[quiz_type.name]) > 0:
+        for i in range(len(highscores[quiz_type.name])):
+            if percentage > highscores[quiz_type.name][i]["percentage"]:
                 new_highscore_index = i
                 break
-            if percentage == highscores[i]["percentage"] and gametime <= highscores[i]["gametime"]:
+            if percentage == highscores[quiz_type.name][i]["percentage"] and gametime <= highscores[quiz_type.name][i]["gametime"]:
                 new_highscore_index = i
                 break
-            elif len(highscores) < 5:
-                new_highscore_index = len(highscores)
+            elif len(highscores[quiz_type.name]) < 5:
+                new_highscore_index = len(highscores[quiz_type.name])
         if new_highscore_index >= 0:
-            highscores = add_highscore(highscores, new_highscore_index, percentage, gametime)
+            highscores = add_highscore(highscores, quiz_type, new_highscore_index, percentage, gametime)
+        else:
+            print(c.info("\tNem sikerült bekerülnöd a TOP 5-be!"))
+            time.sleep(5)
     return highscores
 
 
-def add_highscore(highscores, new_highscore_index, percentage, gametime):
+#  Eredmény beszúrása a highscore táblába és mentés fle-ba
+def add_highscore(highscores, quiz_type, new_highscore_index, percentage, gametime):
     print(c.highlight("\tGratulálok az eredményed benne van a TOP5-ben!"))
     name = input(c.highlight("\tAdd meg a neved: "))
     new_entry = {"name": name, "percentage": percentage, "gametime": gametime}
-    highscores.insert(new_highscore_index, new_entry)
-    update_highscores_file(highscores[:5])
+    if new_highscore_index == -1:
+        highscores[quiz_type.name] = []
+        highscores[quiz_type.name].append(new_entry)
+    else:
+        highscores[quiz_type.name].insert(new_highscore_index, new_entry)
+    update_highscores_file(highscores)
     return highscores
 
 
-def show_highscores(highscores):
+#  Highscore táblázat kiíratása
+def show_highscores(highscores, quiz_type):
     show_splash_screen()
     print(c.info(f"{'TOP 5 helyezett':^102}\n"))
     print(c.info(f'{f"{'Név:':<15}{'Százalék:':^15}{'Idő:':>8}":^100}'))
     print(c.info(f'{("-" * 38):^100}'))
-    for i in range(len(highscores)):
-        minutes, seconds = divmod(highscores[i]["gametime"], 60)
-        name_str = f'{f"{i+1}. {highscores[i]['name']}"}'
-        percentage_str = f'{highscores[i]["percentage"]}%'
+    for i in range(len(highscores[quiz_type.name])):
+        minutes, seconds = divmod(highscores[quiz_type.name][i]["gametime"], 60)
+        name_str = f'{f"{i+1}. {highscores[quiz_type.name][i]['name']}"}'
+        percentage_str = f'{highscores[quiz_type.name][i]["percentage"]}%'
         time_str = f"{minutes:02}:{seconds:02}"
         print(c.highlight(f'{f"{name_str:<20}{percentage_str:>4}{time_str:>14}": ^100}'))
     print("\n")
 
 
+#  Highscore file frissítése
 def update_highscores_file(highscores):
-    with open("highscores.txt", "w", encoding="utf-8") as file:
-        for entry in highscores:
-            data = ";".join(str(e) for e in entry.values())
-            file.write(data + "\n")
+    with open("highscores.json", "w", encoding="utf-8") as file:
+        highscores = {"highscores": highscores}
+        json.dump(highscores, file)
