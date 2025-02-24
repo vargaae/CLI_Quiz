@@ -3,7 +3,7 @@ from enum import Enum
 class C(Enum):
     F = "\033[38;5;" #foreground color modifier
     B = "\033[48;5;" #background color modifier
-    END = "\033[0m" #closing tag of the modifier
+    END = "\033[00m" #closing tag of the modifier
     BLACK = "232m"
     BLUE = "20m"
     CYAN = "45m"
