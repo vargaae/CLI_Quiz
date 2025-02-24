@@ -1,0 +1,5 @@
+{'score': 10, 'time': 3.59}
+{'score': 10, 'time': 25.5}
+{'score': 10, 'time': 34.18}
+{'score': 0, 'time': 5.94}
+{'score': 0, 'time': 7.27}

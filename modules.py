@@ -7,6 +7,9 @@ import colors_cli as c
 import settings
 import time
 import json
+from classic_quiz import ClassicQuizGame
+from question_loader import load_questions
+
 
 #  Fő futási ciklus
 def run_game():
@@ -14,10 +17,12 @@ def run_game():
     win_streak = 0
     win_streak = 0
     help_count = settings.HELP_COUNT
-    quiz_type = get_quiz_type()
-    quiz_data = load_questions(quiz_type)
-    num_of_choices = get_difficulty(quiz_type)
-    questions = generate_questions(num_of_choices, quiz_data)
+    show_welcome_screen()
+    question_type = get_question_type()
+    questions_data = load_questions(question_type)
+    num_of_questions = get_num_of_questions(len(questions_data), question_type)
+    num_of_choices = get_difficulty()
+    questions = generate_questions(num_of_questions, num_of_choices, questions_data)
 
     start_time = time.time() # Timer indítása
     track_progress = []
@@ -47,18 +52,16 @@ def show_splash_screen():
 
 
 #  Kérdéstípus választási lehetőség
-def get_quiz_type() -> str:
+def get_question_type() -> str:
+    print(c.highlight("\tVálassz az alábbi témakörök közül:\n"))
+    print(f"\t\tA: {cat.Cat.capitals.value}")
+    print(f"\t\tB: {cat.Cat.cars.value}")
+    print(f"\t\tC: {cat.Cat.songs_hu.value}")
+    print(f"\t\tD: {cat.Cat.songs_int.value}")
     while True:
-        show_splash_screen()
-        print(c.highlight("\tVálassz az alábbi témakörök közül:\n"))
-        print(f"\t\tA: {cat.Cat.capitals.value}")
-        print(f"\t\tB: {cat.Cat.cars.value}")
-        print(f"\t\tC: {cat.Cat.songs_hu.value}")
-        print(f"\t\tD: {cat.Cat.songs_int.value}")
         user_input = input("\t--> ")
-        if user_input.lower() not in "abcd" or user_input == "":
-            print(c.warning("\tA-B-C-D választási lehetőséged van!"))
-            time.sleep(1.2)
+        if user_input.lower() not in "abcd":
+            print(c.warning('\t"A", "B", "C" vagy "D" választási lehetőséged van!'))
             continue
         break
     match user_input.lower():
@@ -69,14 +72,14 @@ def get_quiz_type() -> str:
         case "c":
             quiz_type = cat.Cat.songs_hu
         case "d":
-            quiz_type = cat.Cat.songs_int
-    return quiz_type
+            question_type = cat.Cat.songs_int
+    return question_type
 
 
 #  Adatok beolvasása JSON fájlból
-def load_questions(quiz_type):
+def load_questions(question_type):
     try:
-        with open("./quizes/" + quiz_type.name + ".json", encoding="utf-8") as file:
+        with open("./quizes/" + question_type.name + ".json", "r", encoding="utf-8") as file:
             try:
                 raw_data = json.load(file)
             except json.JSONDecodeError as e:
@@ -111,11 +114,11 @@ def get_difficulty(quiz_type) -> int:
 
 
 #  A bekért mennyiségű kvízkérdés generálása bekért mennyiségű válaszlehetőséggel
-def generate_questions(num_of_choices: int, quiz_data: dict) -> tuple[str, str, list[str]]:
+def generate_questions(qty: int, num_of_choices: int, questions_data: dict) -> tuple[str, str, list[str]]:
     questions = []
-    for question_subject in sample(list(quiz_data.keys()), settings.QUESTION_COUNT):
-        right_answer = quiz_data[question_subject]
-        wrong_answers = list(quiz_data.values())
+    for question_subject in sample(list(questions_data.keys()), qty):
+        right_answer = questions_data[question_subject]
+        wrong_answers = list(questions_data.values())
         wrong_answers.remove(right_answer)
         answers_picked = sample(wrong_answers, num_of_choices - 1)
         answers_picked.append(right_answer)
@@ -131,9 +134,7 @@ def ask_questions(question: list, quiz_type: cat.Cat, help_count: int, act_quest
     answers_picked_dict = { chr(ord("A") + i): choices_picked[i] for i in range(len(choices_picked)) }
     already_used_help = False
     while True:
-        show_splash_screen()
-        print(f"\t{act_question}/{settings.QUESTION_COUNT}. ", end="")
-        match quiz_type.name:
+        match question_type.name:
             case "capitals":
                 print(f"Mi {c.highlight(question_topic)} fővárosa?")
             case "cars":

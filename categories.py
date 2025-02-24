@@ -5,3 +5,4 @@ class Cat(Enum):
     cars = "Autómárkák"
     songs_hu = "Magyar dalok"
     songs_int = "Nemzetközi dalok"   
+    python_learning = "Python tanuló tesztkérdések"   
