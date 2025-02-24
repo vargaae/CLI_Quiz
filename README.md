@@ -11,3 +11,20 @@
 - ✅ Időmérés és ranglista: A játék időre mehet, és az eredményeket elmenti.
 - ✅ Segítségek: Felezés (50/50)
 - ✅ Kategóriák kibővítése
+
+### Térkép:
+/CLI_Quiz
+│── quizes/
+│   ├── capitals.json
+│   ├── cars.json
+│   ├── python_learning.json
+│   ├── songs_hu.json
+│   ├── songs_int.json
+│── main.py
+│── modules.py
+│── classic_quiz.py
+│── question_loader.py
+│── ascii.py
+│── categories.py
+│── colors_cli.py
+│── highscores.txt - TODO: időtartó ranglista

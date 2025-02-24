@@ -7,7 +7,7 @@ import colors_cli as c
 import settings
 import time
 import json
-from classic_quiz import QuizGame
+from classic_quiz import ClassicQuizGame
 
 
 #  Fő futási ciklus
@@ -50,7 +50,7 @@ def get_question_type() -> str:
     print(f"\t\tB: {cat.Cat.cars.value}")
     print(f"\t\tC: {cat.Cat.songs_hu.value}")
     print(f"\t\tD: {cat.Cat.songs_int.value}")
-    print(f"\t\tE: {cat.Cat.pyquestions.value}")
+    print(f"\t\tE: {cat.Cat.python_learning.value}")
     while True:
         user_input = input("\t--> ")
         if user_input.lower() not in "abcde":
@@ -67,7 +67,7 @@ def get_question_type() -> str:
         case "d":
             question_type = cat.Cat.songs_int
         case "e":
-            question_type = cat.Cat.pyquestions
+            question_type = cat.Cat.python_learning
     return question_type
 
 
@@ -128,10 +128,11 @@ def get_difficulty() -> int:
 
 #  A bekért mennyiségű kvízkérdés generálása bekért mennyiségű válaszlehetőséggel
 def generate_questions(question_type, qty: int, num_of_choices: int, questions_data: dict) -> tuple[str, str, list[str]]:
-    # TODO: ITT kezdődik a módosítás: Ha Python vizsga kérdéseket választja a User, akkor a classic_quiz\ QuizGame-ból kell hívni a play() metódust, tehát egy külön ágra fut, aminek a felületét az alaphoz kell igazítani
-    if (question_type == cat.Cat.pyquestions):
-        game = QuizGame()
-        game.play()
+    # TODO: ITT kezdődik a módosítás: Ha Python vizsga kérdéseket választja a User, akkor a classic_quiz\ ClassicQuizGame-ból kell hívni a play() metódust, tehát egy külön ágra fut, aminek a felületét az alaphoz kell igazítani
+    if (question_type == cat.Cat.python_learning):
+        game = ClassicQuizGame()
+        # TODO: átadni a get_num_of_questions mennyiségét - num_of_questions ???
+        game.play(qty, num_of_choices)
     else:
         questions = []
         for question_subject in sample(list(questions_data.keys()), qty):
@@ -153,7 +154,7 @@ def ask_questions(question: list, question_type: cat.Cat, help_count: int, act_q
     already_used_help = False
     while True:
         match question_type.name:
-            case "pyquestions":
+            case "python_learning":
                 print(f"\t{act_question}. {c.highlight(question_topic)} következnek:")
             case "capitals":
                 print(f"\t{act_question}. Mi {c.highlight(question_topic)} fővárosa?")
