@@ -22,12 +22,14 @@ def run_game():
     num_of_choices = get_difficulty(quiz_type)
     # TODO: ITT kezdődik a módosítás: Ha Python kvíz kérdéseket választja a User, akkor a classic_quiz\ ClassicQuizGame-ból kell hívni a play() metódust, tehát egy külön ágra fut, aminek a felületét az alaphoz kell igazítani
     # TODO: generate_questions() metódus beépítése a classic_quiz\ClassicQuizGame-ben
+    pyquestions = "pyquestions"
     if (quiz_type == cat.Cat.python_learning):
-        game = ClassicQuizGame(quiz_type)
-        # átadni a question_type-ot -> question_loader.py
-        game.play(num_of_choices)
-        return []
-    else: questions = generate_questions(num_of_choices, quiz_data, quiz_type)
+        questions = generate_questions(num_of_choices, quiz_data, quiz_type, pyquestions)
+        # game = ClassicQuizGame(quiz_type)
+        # # átadni a question_type-ot -> question_loader.py
+        # game.play(num_of_choices)
+        # return []
+    else: questions = generate_questions(num_of_choices, quiz_data, quiz_type, pyquestions)
 
     start_time = time.time() # Timer indítása
     track_progress = []
@@ -114,18 +116,6 @@ def get_difficulty(quiz_type) -> int:
 
 #  A bekért mennyiségű kvízkérdés generálása bekért mennyiségű válaszlehetőséggel
 # -> question_generator.py
-# TODO: Clean Up if it's ready:
-# def generate_questions(num_of_choices: int, quiz_data: dict) -> tuple[str, str, list[str]]:
-#     questions = []
-#     for question_subject in sample(list(quiz_data.keys()), settings.QUESTION_COUNT):
-#         right_answer = quiz_data[question_subject]
-#         wrong_answers = list(quiz_data.values())
-#         wrong_answers.remove(right_answer)
-#         answers_picked = sample(wrong_answers, num_of_choices - 1)
-#         answers_picked.append(right_answer)
-#         shuffle(answers_picked)
-#         questions.append((question_subject, right_answer, answers_picked))
-#     return questions
 
 
 #  A kérdések feltétele, a felhasználói válasz és a jó válasz visszaadásával
@@ -139,7 +129,7 @@ def ask_questions(question: list, quiz_type: cat.Cat, help_count: int, act_quest
         print(f"\t{act_question}/{settings.QUESTION_COUNT}. ", end="")
         match quiz_type.name:
             case "python_learning":
-                print(f"\t{act_question}. {c.highlight(question_topic)} következnek:")
+                print(f"{c.highlight(question_topic)}?")
             case "capitals":
                 print(f"Mi {c.highlight(question_topic)} fővárosa?")
             case "cars":

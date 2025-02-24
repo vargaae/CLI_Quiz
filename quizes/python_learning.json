@@ -1,62 +1,92 @@
 [
     {
-        "question": "What is the output of print(2 * 3 ** 3)?",
-        "options": ["54", "18", "36", "24"],
-        "answer": "54",
-        "hint": "Remember operator precedence: exponentiation before multiplication."
+    "question": "Mi lesz a print(2 * 3 ** 3) kimenete?",
+    "options": ["54", "18", "36", "24"],
+    "answer": "54",
+    "hint": "Figyelj az operátorok precedenciájára: hatványozás megelőzi a szorzást."
     },
     {
-        "question": "Which of the following is used to define a function in Python?",
-        "options": ["func", "define", "def", "function"],
-        "answer": "def",
-        "hint": "Functions in Python start with a keyword that is three letters long."
+    "question": "Melyik kulcsszóval lehet függvényt definiálni Pythonban?",
+    "options": ["func", "define", "def", "function"],
+    "answer": "def",
+    "hint": "A Python függvények egy hárombetűs kulcsszóval kezdődnek."
     },
     {
-        "question": "Which data type is mutable in Python?",
-        "options": ["Tuple", "String", "List", "Integer"],
-        "answer": "List",
-        "hint": "Think about which data structure allows modification after creation."
+    "question": "Melyik adattípus módosítható Pythonban?",
+    "options": ["Tuple", "String", "List", "Integer"],
+    "answer": "List",
+    "hint": "Gondolj arra, hogy melyik adatszerkezet változtatható meg létrehozás után."
     },
     {
-        "question": "What is the output of bool([])?",
-        "options": ["True", "False", "None", "Error"],
-        "answer": "False",
-        "hint": "Empty objects in Python generally evaluate to this boolean value."
+    "question": "Mi lesz a bool([]) kimenete?",
+    "options": ["True", "False", "None", "Hiba"],
+    "answer": "False",
+    "hint": "Az üres objektumok általában milyen logikai értéket kapnak Pythonban?"
     },
     {
-        "question": "Which module is used for random number generation in Python?",
-        "options": ["random", "rand", "math", "numpy"],
-        "answer": "random",
-        "hint": "The module name is the same as the word for unpredictability."
+    "question": "Melyik modul használható véletlenszám-generálásra Pythonban?",
+    "options": ["random", "rand", "math", "numpy"],
+    "answer": "random",
+    "hint": "A modul neve megegyezik a véletlenszerűség angol szavával."
     },
     {
-        "question": "How do you start a comment in Python?",
-        "options": ["//", "/*", "#", "--"],
-        "answer": "#",
-        "hint": "It's a single-character symbol used at the beginning of a line."
+    "question": "Milyen karakterrel kezdünk megjegyzést Pythonban?",
+    "options": ["//", "/*", "#", "--"],
+    "answer": "#",
+    "hint": "Egyetlen karakter, amit a sor elejére írunk."
     },
     {
-        "question": "Which keyword is used to handle exceptions in Python?",
-        "options": ["error", "except", "catch", "try"],
-        "answer": "except",
-        "hint": "This keyword often follows 'try' in exception handling."
+    "question": "Melyik kulcsszóval kezeljük a kivételeket Pythonban?",
+    "options": ["error", "except", "catch", "try"],
+    "answer": "except",
+    "hint": "Ez a kulcsszó általában a 'try' után következik."
     },
     {
-        "question": "Which function is used to get user input in Python?",
-        "options": ["scan()", "read()", "input()", "get()"],
-        "answer": "input()",
-        "hint": "It's a built-in function that waits for user response."
+    "question": "Melyik függvényt használjuk a felhasználói bemenet bekérésére?",
+    "options": ["scan()", "read()", "input()", "get()"],
+    "answer": "input()",
+    "hint": "Ez egy beépített függvény, amely megvárja a felhasználó válaszát."
     },
     {
-        "question": "What is the output of len(\"Hello\")?",
-        "options": ["4", "5", "6", "None"],
-        "answer": "5",
-        "hint": "Count the number of characters, including letters and spaces."
+    "question": "Mi lesz a len('Hello') kimenete?",
+    "options": ["4", "5", "6", "None"],
+    "answer": "5",
+    "hint": "Számold meg a karaktereket, beleértve a betűket és a szóközt is."
     },
     {
-        "question": "What will print(type([])) return?",
-        "options": ["<class 'list'>", "<class 'dict'>", "<class 'tuple'>", "<class 'set'>"],
-        "answer": "<class 'list'>",
-        "hint": "Empty square brackets define this data structure."
+    "question": "Mit ad vissza a print(type([])) utasítás?",
+    "options": ["<class 'list'>", "<class 'dict'>", "<class 'tuple'>", "<class 'set'>"],
+    "answer": "<class 'list'>",
+    "hint": "Az üres szögletes zárójel milyen adatszerkezetet jelöl?"
+    },
+    {
+    "question": "Melyik ciklusszerkezet NEM létezik Pythonban?",
+    "options": ["for", "while", "do-while", "None"],
+    "answer": "do-while",
+    "hint": "Ez egy olyan ciklustípus, amelyet más nyelvekben használunk, de Pythonban nincs meg."
+    },
+    {
+    "question": "Hogyan lehet egy tömb utolsó elemét elérni Pythonban?",
+    "options": ["arr[last]", "arr[-1]", "arr[len(arr)]", "arr[1]"],
+    "answer": "arr[-1]",
+    "hint": "A negatív indexelés lehetővé teszi az utolsó elem elérését."
+    },
+    {
+    "question": "Melyik függvényt használhatjuk fájl beolvasására Pythonban?",
+    "options": ["open()", "readfile()", "load()", "read()"],
+    "answer": "open()",
+    "hint": "Ez egy beépített függvény, amely megnyit egy fájlt."
+    },
+    {
+    "question": "Hogyan tudunk egy listát növekvő sorrendbe rendezni Pythonban?",
+    "options": ["list.sort()", "sort(list)", "sorted(list)", "list.sorted()"],
+    "answer": "sorted(list)",
+    "hint": "Ez egy beépített függvény, amely egy új, rendezett listát ad vissza."
+    },
+    {
+    "question": "Melyik operátor felel meg az "ÉS" műveletnek Pythonban?",
+    "options": ["&", "&&", "and", "AND"],
+    "answer": "and",
+    "hint": "Ez egy kulcsszó, amelyet logikai műveletekhez használunk."
     }
-]
+    ]

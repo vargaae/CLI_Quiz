@@ -1,9 +1,11 @@
+# TODO: CLEAN UP unneccessary functions and imports
+# from question_generator import generate_questions
 import random
 import time
 
 import categories as cat
+
 from question_loader import load_questions
-from question_generator import generate_questions
 
 class ClassicQuizGame():
     def __init__(self, quiz_type):
@@ -12,13 +14,14 @@ class ClassicQuizGame():
         self.score = 0
         self.lifelines = {"50-50": 1, "hint": 1}
         self.start_time = None
-
+# TODO: CLEAN UP unneccessary functions: shuffle is working well in question_generator.py?
     def shuffle_answers(self, question):
         options = question["options"][:]
         correct_answer = question["answer"]
         random.shuffle(options)
         return options, options.index(correct_answer)
 
+# TODO: CLEAN UP unneccessary functions -> hint?
     def use_lifeline(self, question):
         print("\nLifelines: 1) 50-50  2) Hint")
         choice = input("Choose lifeline (1/2) or press enter to skip: ")
@@ -38,6 +41,7 @@ class ClassicQuizGame():
         
         return self.shuffle_answers(question)
 
+# TODO: CLEAN UP unneccessary functions and imports
     def play(self, num_of_choices):
         num_of_questions:int = 15
         if not self.questions:
@@ -45,7 +49,7 @@ class ClassicQuizGame():
             return
 
         print("Kezdődjön a Python Kvíz!")
-
+# TODO: CLEAN UP unneccessary time?
         self.start_time = time.time()
         random.shuffle(self.questions)
         
@@ -55,39 +59,38 @@ class ClassicQuizGame():
     #     game = ClassicQuizGame()
     #     game.play()
     # else:
-    #     questions = []
-    #     for question_subject in sample(list(questions_data.keys()), qty):
-    #         right_answer = questions_data[question_subject]
-    #         wrong_answers = list(questions_data.values())
-    #         wrong_answers.remove(right_answer)
-    #         answers_picked = sample(wrong_answers, num_of_choices - 1)
-    #         answers_picked.append(right_answer)
-    #         shuffle(answers_picked)
-    #         questions.append((question_subject, right_answer, answers_picked))
-    #     return questions
 
 # KÉRDÉS GENERÁLÁS
+        questions = []
+        for question in self.questions:
+            right_answer = question.answer # question_subject->question
+
+            answers_picked = question.options # options
+            random.shuffle(answers_picked) # keverés? > ignore
+            questions.append((question.question, right_answer, answers_picked))
+        return questions
+
                                                     # TODO: KÉRDÉSEK SZÁMA
-        for i, question in enumerate(self.questions[:num_of_questions], start=1):
         # for i, question in enumerate(self.questions[:10], start=1):
-            print(f"\nQuestion {i}: {question['question']}")
-            options, correct_index = self.shuffle_answers(question)
+            # print(f"\nQuestion {i}: {question['question']}")
+            # options, correct_index = self.shuffle_answers(question)
             
-            for idx, option in enumerate(options, start=1):
-                print(f"{chr(96 + idx)}) {option}")
+            # for idx, option in enumerate(options, start=1):
+            #     print(f"{chr(96 + idx)}) {option}")
 # KÉRDÉS GENERÁLÁS
 
-            options, correct_index = self.use_lifeline(question)
+        #     options, correct_index = self.use_lifeline(question)
             
-            answer = input("Válaszod (a/b/c/d): ").lower()
-            if 0 <= ord(answer) - 97 < len(options) and options[ord(answer) - 97] == question["answer"]:
-                print("Helyes!")
-                self.score += 10 if i % 5 != 0 else 20  # TODO: Risk factor: every 5th question is worth double
-            else:
-                print(f"Hibás! A helyes válasz: {question['answer']}")
+        #     answer = input("Válaszod (a/b/c/d): ").lower()
+        #     if 0 <= ord(answer) - 97 < len(options) and options[ord(answer) - 97] == question["answer"]:
+        #         print("Helyes!")
+        #         self.score += 10 if i % 5 != 0 else 20  # TODO: Risk factor: every 5th question is worth double
+        #     else:
+        #         print(f"Hibás! A helyes válasz: {question['answer']}")
 
-        self.show_results()
-
+        # self.show_results()
+        
+# TODO: CLEAN UP unneccessary functions
     def show_results(self):
         total_time = round(time.time() - self.start_time, 2)
         print(f"\nJáték vége! A végső eredményed: {self.score}")
