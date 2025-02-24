@@ -7,13 +7,12 @@ from question_loader import load_questions
 
 class ClassicQuizGame:
     # with open("./quizes/" + question_type.name + ".json", "r", encoding="utf-8") as file:
-    question_type = cat.Cat.capitals
     # def __init__(self, filename='"./quizes/" + question_type.name + ".json"'):
-    def __init__(self, filename="./quizes/python_learning.json"):
-        self.filename = filename
-        self.questions = load_questions(self.filename)
+    def __init__(self):
+        question_type = cat.Cat.python_learning
+        self.questions = load_questions(question_type)
         self.score = 0
-        self.lifelines = {"50-50": 1, "hint": 1}
+        self.lifelines = {"50-50": 1}
         self.start_time = None
 
     def shuffle_answers(self, question):

@@ -8,6 +8,7 @@ import settings
 import time
 import json
 from classic_quiz import ClassicQuizGame
+from question_loader import load_questions
 
 
 #  Fő futási ciklus
@@ -72,18 +73,18 @@ def get_question_type() -> str:
 
 
 #  Adatok beolvasása JSON fájlból
-def load_questions(question_type):
-    try:
-        with open("./quizes/" + question_type.name + ".json", "r", encoding="utf-8") as file:
-            try:
-                raw_data = json.load(file)
-            except json.JSONDecodeError as e:
-                print(c.error("\tHIBA! Érvénytelen JSON formátum!"))
-                exit()
-        return raw_data
-    except FileNotFoundError:
-        print(c.error("\tHIBA! A kérdésfájl nem található!"))
-        exit()
+# def load_questions(question_type):
+#     try:
+#         with open("./quizes/" + question_type.name + ".json", "r", encoding="utf-8") as file:
+#             try:
+#                 raw_data = json.load(file)
+#             except json.JSONDecodeError as e:
+#                 print(c.error("\tHIBA! Érvénytelen JSON formátum!"))
+#                 exit()
+#         return raw_data
+#     except FileNotFoundError:
+#         print(c.error("\tHIBA! A kérdésfájl nem található!"))
+#         exit()
 
 
 #  A kérdések számának bekérése
@@ -131,8 +132,9 @@ def generate_questions(question_type, qty: int, num_of_choices: int, questions_d
     # TODO: ITT kezdődik a módosítás: Ha Python vizsga kérdéseket választja a User, akkor a classic_quiz\ ClassicQuizGame-ból kell hívni a play() metódust, tehát egy külön ágra fut, aminek a felületét az alaphoz kell igazítani
     if (question_type == cat.Cat.python_learning):
         game = ClassicQuizGame()
-        # TODO: átadni a get_num_of_questions mennyiségét - num_of_questions ???
+        # TODO: átadni a question_type-ot -> question_loader.py
         game.play(qty, num_of_choices)
+        return []
     else:
         questions = []
         for question_subject in sample(list(questions_data.keys()), qty):

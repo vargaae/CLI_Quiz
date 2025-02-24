@@ -1,20 +1,20 @@
 import json
+import colors_cli as c
 
 #  Adatok beolvasása JSON fájlból
-def load_questions(filename):
+def load_questions(question_type):
     try:
-        with open(filename, "r", encoding="utf-8") as file:
-        # with open("./quizes/" + question_type.name + ".json", "r", encoding="utf-8") as file:
+        with open("./quizes/" + question_type.name + ".json", "r", encoding="utf-8") as file:
             try:
                 raw_data = json.load(file)
             except json.JSONDecodeError as e:
-                print("\tHIBA! Érvénytelen JSON formátum!")
-                # print(c.error("\tHIBA! Érvénytelen JSON formátum!"))
+                print(c.error("\tHIBA! Érvénytelen JSON formátum!"))
+                # return []
                 exit()
         return raw_data
     except FileNotFoundError:
-        print("\tHIBA! A kérdésfájl nem található!")
-        # print(c.error("\tHIBA! A kérdésfájl nem található!"))
+        print(c.error("\tHIBA! A kérdésfájl nem található!"))
+        # return []
         exit()
 
 # def load_questions(filename):
