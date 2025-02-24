@@ -1,4 +1,4 @@
-from random import choice, shuffle, sample
+from random import choice
 from functools import reduce
 from ascii import ascii_art
 from os import system, name as OSname
@@ -7,6 +7,9 @@ import colors_cli as c
 import settings
 import time
 import json
+from classic_quiz import ClassicQuizGame
+from question_loader import load_questions
+from question_generator import generate_questions
 
 #  Fő futási ciklus
 def run_game():
@@ -17,7 +20,14 @@ def run_game():
     quiz_type = get_quiz_type()
     quiz_data = load_questions(quiz_type)
     num_of_choices = get_difficulty(quiz_type)
-    questions = generate_questions(num_of_choices, quiz_data)
+    # TODO: ITT kezdődik a módosítás: Ha Python kvíz kérdéseket választja a User, akkor a classic_quiz\ ClassicQuizGame-ból kell hívni a play() metódust, tehát egy külön ágra fut, aminek a felületét az alaphoz kell igazítani
+    # TODO: generate_questions() metódus beépítése a classic_quiz\ClassicQuizGame-ben
+    if (quiz_type == cat.Cat.python_learning):
+        game = ClassicQuizGame(quiz_type)
+        # átadni a question_type-ot -> question_loader.py
+        game.play(num_of_choices)
+        return []
+    else: questions = generate_questions(num_of_choices, quiz_data, quiz_type)
 
     start_time = time.time() # Timer indítása
     track_progress = []
@@ -55,9 +65,10 @@ def get_quiz_type() -> str:
         print(f"\t\tB: {cat.Cat.cars.value}")
         print(f"\t\tC: {cat.Cat.songs_hu.value}")
         print(f"\t\tD: {cat.Cat.songs_int.value}")
+        print(f"\t\tE: {cat.Cat.python_learning.value}")
         user_input = input("\t--> ")
-        if user_input.lower() not in "abcd" or user_input == "":
-            print(c.warning("\tA-B-C-D választási lehetőséged van!"))
+        if user_input.lower() not in "abcde" or user_input == "":
+            print(c.warning("\tA-B-C-D-E választási lehetőséged van!"))
             time.sleep(1.2)
             continue
         break
@@ -70,22 +81,13 @@ def get_quiz_type() -> str:
             quiz_type = cat.Cat.songs_hu
         case "d":
             quiz_type = cat.Cat.songs_int
+        case "e":
+            quiz_type = cat.Cat.python_learning
     return quiz_type
 
 
 #  Adatok beolvasása JSON fájlból
-def load_questions(quiz_type):
-    try:
-        with open("./quizes/" + quiz_type.name + ".json", encoding="utf-8") as file:
-            try:
-                raw_data = json.load(file)
-            except json.JSONDecodeError as e:
-                print(c.error("\tHIBA! Érvénytelen JSON formátum!"))
-                exit()
-        return raw_data
-    except FileNotFoundError:
-        print(c.error("\tHIBA! A kérdésfájl nem található!"))
-        exit()
+# -> question_loader.py
 
 
 #  A választási lehetőségek számának bekérése
@@ -111,17 +113,19 @@ def get_difficulty(quiz_type) -> int:
 
 
 #  A bekért mennyiségű kvízkérdés generálása bekért mennyiségű válaszlehetőséggel
-def generate_questions(num_of_choices: int, quiz_data: dict) -> tuple[str, str, list[str]]:
-    questions = []
-    for question_subject in sample(list(quiz_data.keys()), settings.QUESTION_COUNT):
-        right_answer = quiz_data[question_subject]
-        wrong_answers = list(quiz_data.values())
-        wrong_answers.remove(right_answer)
-        answers_picked = sample(wrong_answers, num_of_choices - 1)
-        answers_picked.append(right_answer)
-        shuffle(answers_picked)
-        questions.append((question_subject, right_answer, answers_picked))
-    return questions
+# -> question_generator.py
+# TODO: Clean Up if it's ready:
+# def generate_questions(num_of_choices: int, quiz_data: dict) -> tuple[str, str, list[str]]:
+#     questions = []
+#     for question_subject in sample(list(quiz_data.keys()), settings.QUESTION_COUNT):
+#         right_answer = quiz_data[question_subject]
+#         wrong_answers = list(quiz_data.values())
+#         wrong_answers.remove(right_answer)
+#         answers_picked = sample(wrong_answers, num_of_choices - 1)
+#         answers_picked.append(right_answer)
+#         shuffle(answers_picked)
+#         questions.append((question_subject, right_answer, answers_picked))
+#     return questions
 
 
 #  A kérdések feltétele, a felhasználói válasz és a jó válasz visszaadásával
@@ -134,6 +138,8 @@ def ask_questions(question: list, quiz_type: cat.Cat, help_count: int, act_quest
         show_splash_screen()
         print(f"\t{act_question}/{settings.QUESTION_COUNT}. ", end="")
         match quiz_type.name:
+            case "python_learning":
+                print(f"\t{act_question}. {c.highlight(question_topic)} következnek:")
             case "capitals":
                 print(f"Mi {c.highlight(question_topic)} fővárosa?")
             case "cars":
