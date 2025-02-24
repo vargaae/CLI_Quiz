@@ -7,9 +7,11 @@ import colors_cli as c
 import settings
 import time
 import json
-from classic_quiz import ClassicQuizGame
+
+# from classic_quiz import ClassicQuizGame
 from question_loader import load_questions
 from question_generator import generate_questions
+from quiz_handler import ask_questions
 
 #  Fő futási ciklus
 def run_game():
@@ -20,21 +22,19 @@ def run_game():
     quiz_type = get_quiz_type()
     quiz_data = load_questions(quiz_type)
     num_of_choices = get_difficulty(quiz_type)
-    # TODO: ITT kezdődik a módosítás: Ha Python kvíz kérdéseket választja a User, akkor a classic_quiz\ ClassicQuizGame-ból kell hívni a play() metódust, tehát egy külön ágra fut, aminek a felületét az alaphoz kell igazítani
-    # TODO: generate_questions() metódus beépítése a classic_quiz\ClassicQuizGame-ben
-    pyquestions = "pyquestions"
+    # TODO: generate_questions() metódus beépítve a classic_quiz\ClassicQuizGame helyett -> Clean Up
     if (quiz_type == cat.Cat.python_learning):
-        questions = generate_questions(num_of_choices, quiz_data, quiz_type, pyquestions)
+        questions = generate_questions(num_of_choices, quiz_data, quiz_type)
         # game = ClassicQuizGame(quiz_type)
         # # átadni a question_type-ot -> question_loader.py
         # game.play(num_of_choices)
         # return []
-    else: questions = generate_questions(num_of_choices, quiz_data, quiz_type, pyquestions)
+    else: questions = generate_questions(num_of_choices, quiz_data, quiz_type)
 
     start_time = time.time() # Timer indítása
     track_progress = []
     for i in range(settings.QUESTION_COUNT):
-        answer, right_answer, help_count = ask_questions(questions[i], quiz_type, help_count, i, win_streak)
+        answer, right_answer, help_count = ask_questions(questions[i], quiz_type, help_count, i, win_streak, quiz_data, i)
         if check_answer(answer, right_answer):
             track_progress.append(True)
             points += 1
@@ -119,63 +119,7 @@ def get_difficulty(quiz_type) -> int:
 
 
 #  A kérdések feltétele, a felhasználói válasz és a jó válasz visszaadásával
-def ask_questions(question: list, quiz_type: cat.Cat, help_count: int, act_question, win_streak: int) -> list[str]:
-    act_question += 1
-    question_topic, right_answer, choices_picked = question
-    answers_picked_dict = { chr(ord("A") + i): choices_picked[i] for i in range(len(choices_picked)) }
-    already_used_help = False
-    while True:
-        show_splash_screen()
-        print(f"\t{act_question}/{settings.QUESTION_COUNT}. ", end="")
-        match quiz_type.name:
-            case "python_learning":
-                print(f"{c.highlight(question_topic)}?")
-            case "capitals":
-                print(f"Mi {c.highlight(question_topic)} fővárosa?")
-            case "cars":
-                print(f"Melyik a jellemző modellje a(z) {c.highlight(question_topic)} autómárkának?")
-            case "songs_hu" | "songs_int":
-                print(f"Melyik a(z) {c.highlight(question_topic)} egyik ismert dala?")
-        if already_used_help: print(c.info("\tFeleztél! Az alábbi lehetőségek maradtak:"))
-        for letter, item in answers_picked_dict.items():
-            print(f"\t\t{letter}. {item}") # Válaszlehetőségek kiírása
-        if help_count and not already_used_help: 
-            match help_count:
-                case 2|3|4|5: print(c.info(f"{'Felező "/": ' + c.ok(str(help_count) + 'db'):>90}"))
-                case 1: print(c.info(f"{'Felező "/": ' + c.warning(str(help_count) + 'db'):>91}"))
-                case _: print(c.info(f"{'Felező "/": ' + c.error(str(help_count) + 'db'):>91}"))
-            
-        match win_streak % 5:
-            case 3: print(f"{f'{c.info("Win streak: ") + c.warning(str(win_streak) + "x")}':>105}")
-            case 4: print(f"{f'{c.info("Win streak: ") + c.error(str(win_streak) + "x")}':>105}")
-            case _: print(f"{f'{c.info("Win streak: ") + c.ok(str(win_streak) + "x")}':>104}")
-        your_answer = input("\tTipped --> ").upper()
-        if your_answer == "/":
-            if help_count == 0:
-                print(c.warning("\tNincs több felezési lehetőséged!\n"))
-                time.sleep(1.2)
-                continue
-            if already_used_help:
-                print(c.warning("\tMár használtál egy felezést ennél a kérdésnél!\n"))
-                time.sleep(1.2)
-                continue
-            help_count -= 1
-            num_of_choices = len(answers_picked_dict)
-            while len(answers_picked_dict) != num_of_choices / 2:
-                answer_to_dismiss = choice(list(answers_picked_dict.keys()))
-                if answers_picked_dict[answer_to_dismiss] == right_answer:
-                    continue
-                answers_picked_dict.pop(answer_to_dismiss)
-            already_used_help = True
-            continue
-        elif your_answer in answers_picked_dict.keys():
-            your_answer = answers_picked_dict[your_answer]
-            already_used_help = False
-            break
-        else:
-            print(c.warning("\tNem lehetséges válaszlehetőség!"))
-            time.sleep(1.2)
-    return your_answer, right_answer, help_count
+# -> quiz_handler.py
 
 
 #  A válaszok kiértékelése, vizuális visszajelzés, pontszám visszaadása
