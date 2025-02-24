@@ -1,3 +1,4 @@
+# DEV/FEJLESZTÉSI Branch végleges egyesítéshez
 # 🧠 KVÍZJÁTÉK 🏆
 ## CLI felületű többféle kérdéstípust vegyesen tartalmazó kvízjáték
 ### Futtatáshoz szükséges:
