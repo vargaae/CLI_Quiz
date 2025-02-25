@@ -1,12 +1,12 @@
 from random import shuffle, sample
 import settings
-import categories as cat
+import features.categories as cat
 
 
 #  A bekért mennyiségű kvízkérdés generálása bekért mennyiségű válaszlehetőséggel
 def generate_questions(num_of_choices: int, quiz_data: dict, quiz_type: cat.Cat) -> tuple[str, str, list[str]]:
     questions = []
-    if (quiz_type.name == "python_learning"): 
+    if quiz_type.name == "python_learning":
         for question in quiz_data:
             right_answer = question['answer']
             answers_picked = question['options'][0:num_of_choices]

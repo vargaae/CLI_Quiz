@@ -1,5 +1,5 @@
-from modules import run_game
-from colors_cli import highlight
+from features.modules import run_game
+from features.colors_cli import highlight
 
 def main() -> None:
     while True:

@@ -1,5 +1,5 @@
 import json
-import colors_cli as c
+import features.colors_cli as c
 
 #  Adatok beolvasása JSON fájlból
 def load_questions(question_type):
