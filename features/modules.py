@@ -98,10 +98,12 @@ def get_difficulty(quiz_type) -> int:
 #  A válaszok kiértékelése, vizuális visszajelzés, pontszám visszaadása
 def check_answer(your_answer, right_answer):
     if your_answer == right_answer:
-        print(c.col(f"\t\u2588\u2588", c.C.GREEN)) # Zöld kocka kiíratása, ha helyes a válasz
+        print("\x1b[1A\x1b[2K", end="")
+        print(c.col(f"\t\t\u2588\u2588", c.C.GREEN)) # Zöld kocka kiíratása, ha helyes a válasz
         return True
     else:
-        print(c.col(f"\t\u2588\u2588", c.C.RED)) # Piros kocka kiíratása, ha helytelen a válasz
+        print("\x1b[1A\x1b[2K", end="")
+        print(c.col(f"\t\t\u2588\u2588", c.C.RED)) # Piros kocka kiíratása, ha helytelen a válasz
         return False
 
 
