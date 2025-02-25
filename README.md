@@ -6,7 +6,7 @@
 
 #### <li>Python 3.10+</li>
 
-#### <li><code>python.exe Quiz_main.py</code></li>
+#### <li><code>python.exe main.py</code></li>
 
 ### Feature-k:
 
